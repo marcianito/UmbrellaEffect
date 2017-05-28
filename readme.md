@@ -51,12 +51,12 @@ All changes should be done in a new file following (or a copy of) the reduction_
 (Steps 2 to X are only explanatory for what the script does; no modifications necessary.)
 
 1. Setup: WHAT IS DOES, WHAT YOU NEED
-	* _Set SG coordinates_
-	* _Choose discretization_
-	* _Set correct file to load for DEM input_
 	* _Set output directory (and file extention !? .csv / .rData !?)_
-	* _Set SG location variables (center, corner, etc.)_
+	* _Set SG coordinates_
+	* _Set correct file to load for DEM input_
+	* _Choose discretization_
 	* _Construct foundation of building_
+	* _Set SG location variables (center, corner, etc.)_
 	* _Choose dominant hydrological site condition_
 	* __
 2. Calculate gravity response time series of observation data: WHAT IS DOES 
