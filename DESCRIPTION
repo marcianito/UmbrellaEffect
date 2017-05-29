@@ -1,0 +1,14 @@
+Package: UmbrellaEffect
+Title: Gravity data reduction procedure (related to the shielding of its building)
+Version: 0.9
+Authors@R: person("Marvin", "Reich", email = "mreich@posteo.de", role = c("aut", "cre"))
+Description: Presents an easy way to reduce superconducting gravimeter measurements for the
+             shielding influence of the instruments housing. 
+             This procedure was published in the article: "ARTICLE".
+Depends: R (>= 3.3.1)
+Imports: dplyr,
+         raster,
+         zoo 
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
