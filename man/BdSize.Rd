@@ -7,9 +7,9 @@
 BdSize(Bd_x, Bd_y)
 }
 \arguments{
-\item{Bd_x:}{Vector containing min and max x coordinate of the building.}
+\item{Bd_x}{Vector containing min and max x coordinate of the building.}
 
-\item{Bd_y:}{Vector containing min and max y coordinate of the building.}
+\item{Bd_y}{Vector containing min and max y coordinate of the building.}
 }
 \value{
 A numeric value is returned, providing the size of the
