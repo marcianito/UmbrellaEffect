@@ -14,15 +14,15 @@
 #' @examples missing
 
 correct_SGbuilding_foundation = function(
-            gravity_gcomp,
+            gravity_gcomp3d,
             building_foundation
 ){
     ## removing SGPILLAR, WALLS, BASEMENT of building
     # add column for use of filtering
     building_foundation_house = cbind(building_foundation, house = T)
-    gcomp_grid3d = left_join(gcomp_grid3d, building_foundation_house) %>%
-    			mutate(value = ifelse(is.na(house) == T, value, 0)) %>%
-    			select(-house)
+    gcomp_grid3d = dplyr::left_join(gravity_gcomp3d, building_foundation_house) %>%
+    			dplyr::mutate(gcomp = ifelse(is.na(house) == T, gcomp, 0)) %>%
+    			dplyr::select(-house)
     
     # remove duplicated entries
     dups = which(duplicated(gcomp_grid3d[,1:3]) == T)

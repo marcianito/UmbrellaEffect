@@ -6,6 +6,7 @@
 #' @param grid_domain Data.frame, constructed with minimum 3 columns (x,y,z) which describe spatial dimensions of 3d grid.
 #' @param soilMoisture_input Name of file, containing the soil moisture time series.
 #' This file has to contain minimal 2 columns (datetime and z) but can optionally also contain (x and/or y), if a higher dimensional soil moisture dataset is available.
+#' @param grid_discretization data.frame with columns (x,y,z), indicating the discretization in the corresponding direction.
 #' @param input_dir Directory where
 #' 
 #' @return Returns a data.frame with 5 columns.
@@ -16,16 +17,27 @@
 #' @examples missing
 
 SoilMoisture_grid3d = function(
-            grid_domain = gravity_component_grid3d,
-            soilMoisture_input = soilMoisture_input_file,
-            input_dir = dir_input,
+            grid_domain,
+            soilMoisture_input,
+            grid_discretization,
+            grid_depth,
+            input_dir,
             ... # should be able to pass stuff like sep="", etc.
 ){
     # include various routines to read
     # different file types:
     # .rData, .csv, .tsf, 
+    # find input file type (extension)
 
-    SMdata = 
+    # file_type = strsplit(soilMoisture_input, ".", fixed = TRUE)
+    # file_type = file_type[[length(file_type)]]
+    # switch(file_type,
+    #        rData = {},
+    #        csv = {},
+    #        tsf = {}
+    # )
+    # 
+    # SMdata_in = 
 
     ## probably the best to average all available 1 d
     # data per depth layer and then
@@ -34,10 +46,53 @@ SoilMoisture_grid3d = function(
     # how if someone has 2d model data?
 
     # round data to make use join is performed corretely !
-    SMmod_NObd$Depth = round(SMmod_NObd$Depth, 1)
-    # create SM 3d grid with data from NEXT to building
-    SMgrid3d_outside = dplyr::left_join(dplyr::select(grid_domain, -value), SMdata)# %>%
+    # round_z = decimalplaces(grid_discretization$z)
+    # SMdata_in$Depth = round(SMdata_in$Depth, round_z)
 
-    return(SMgrid3d_outside)
+    # 1) inter / extrapolate SM input data to grid_discretization
+    
+    # 1d
+    # grid_new = data.frame(
+    #                       layer = unique(grid_domain$layer),
+    #                       Depth = unique(grid_domain$Depth)
+    # )
+    testdata = data.frame(Depth = rep(round(c(0,0.5,1,1.5,2,2.5,3),1),2),
+                          value = rep(c(.25,.28,.3,.27,.25,.2,.15),2),
+                          datetime = c(rep(1,7),rep(2,7)))
+    # create results data.frame
+    SMdata = data.frame(
+                        datetime = rep(unique(testdata$datetime), each = length(unique(grid_domain$Depth))),
+                        layer = rep(unique(grid_domain$layer), length(unique(testdata$datetime))),
+                        value = NA
+    )
+    # run for every timestep
+    for(ts in unique(testdata$datetime)){
+    # subset SM data
+    SM_sub = dplyr::filter(testdata, datetime == ts) %>%
+             dplyr::select(-datetime)
+    # interpolate data to new resolution
+    SM_int_tmp = approx(SM_sub, xout = unique(grid_domain$Depth))
+    # SM_int_tmp = approx(SM_sub, xout = grid_new$Depth)
+    # combine data
+    SMdata$value[which(SMdata$datetime == ts)] = SM_int_tmp$y
+    }
+
+    # 2) combine x,y information of gcomp_grid with this inter/extrapolated data
+
+    # create SM 3d grid with data from NEXT to building
+    # based on spatial coordinates from gravity component grid
+    SMgrid3d = dplyr::left_join(SMdata, dplyr::select(grid_domain, -gcomp)) %>%
+               dplyr::select(-layer)
+
+    # round all x,y,z to same decimal places
+    # if not, joining might not be complete!
+    round_x = decimalplaces(grid_discretization$x)
+    round_y = decimalplaces(grid_discretization$y)
+    round_z = decimalplaces(grid_discretization$z)
+    SMgrid3d$x = round(SMgrid3d$x, round_x)
+    SMgrid3d$y = round(SMgrid3d$y, round_y)
+    SMgrid3d$z = round(SMgrid3d$z, round_z)
+
+    return(SMgrid3d)
 }
 

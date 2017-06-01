@@ -41,7 +41,7 @@ library(zoo); Sys.setenv(TZ = "GMT")
 library(xts)
 library(dplyr)
 library(raster)
-library(UmbrellaEffect)
+# library(UmbrellaEffect)
 library(reshape2)
 library(ggplot2)
 library(viridis)
@@ -116,7 +116,7 @@ SG_position = "Center"
 
 ## Hydrological site condition
 # options are: standard, Ksat anisotropy, Climate [dry, normal, wet], ...
-Hydro_condition = "Soil texture sandy loam"
+Hydro_condition = "Soil type sandy loam"
 
 ## Soil moisture data time series (observed or modelled)
 soilMoisture_input_file = ""
@@ -165,22 +165,12 @@ message("done.")
 #########################################
 message("Generate 3d gravity component grid..")
 
-# set edge type
-# options: first, last, both
-# this defines how gravity components are computed at the upper and lower grid boundaries
-grid3d_edges = "both"
-
-# convert surface grid to 3d grid
-grid3d = demgrid_to_gcompgrid_Edges(surface_grid, grid3d_discr, grid3d_depth, T, surface_grid)
-
 ## create 3d grid of gravity components
 gravity_component_grid3d = gravity_comp_grid(
             surface = surface_grid,
-            # grid_domain = grid3d,
             SG_coordinates = SGloc,
-            grid_discretizaion = grid3d_discr,
+            grid_discretization = grid3d_discr,
             grid_depth = grid3d_depth
-            #             grid3d_edges
 )
 
 message("done.")
@@ -202,14 +192,6 @@ SGbuilding_foundation = building_foundation(
             grid_discretizaion = grid3d_discr
 )
 
-# !?!
-# add UTM coordiinates
-SGhouse_grid$x = SGhouse_grid$xrel + min(gcomp_grid_igrav$x)
-SGhouse_grid$y = SGhouse_grid$yrel + min(gcomp_grid_igrav$y)
-
-## visual check
-ggplot(cbind(SGbuilding_foundation, house=T), aes(x=x, y=y)) + geom_point(aes(fill=house))
-
 message("done.")
 #########################################
 ## Correct gravity component grid for SG building foundation
@@ -230,6 +212,8 @@ message("Extrapolate soil moisture time series data (observed or modelled) to gr
 SMgrid3d_outside = SoilMoisture_grid3d(
             grid_domain = gravity_component_grid3d,
             soilMoisture_input = soilMoisture_input_file,
+            grid_discretization = grid3d_discr,
+            grid_depth = grid3d_depth,
             input_dir = dir_input
             # , sep = "a", etc..
 )
@@ -240,11 +224,9 @@ message("done.")
 #########################################
 message("Calculate gravity response (from outside of building)..")
 
-# gravity_response_outside_building = gsignal_grids_3d(gravity_component_grid3d, SMgrid3d_outside, F)
 gravity_response_outside_building = calculate_gravity_response(
-            gravity_comp_grid = gravity_component_grid3d,
-            mass_input = SMgrid3d_outside,
-            ? = F
+            gcomp_grid = gravity_component_grid3d,
+            mass_input = SMgrid3d_outside
 )
 
 message("done.")
@@ -273,6 +255,7 @@ buildingSize = BdSize(
            Bd_x = Building_x,
            Bd_y = Building_y
 )
+
 # reduction factor corresponding to size (area) of the SG building
 reduction_factor_BdSize = reduction_BdSize(
             SG_BdSize = buildingSize
@@ -330,8 +313,15 @@ if(gravityObservations_input_file == ""){
 
 if(plot_data){
   message("Plotting time series and saving plot to output directory..")
-
-  plot_ts_data(
+  if(gravityObservations_input_file == ""){
+    plot_ts_data(
+            gravity_outside = gravity_response_outside_building,
+            gravity_below = gravity_response_below_building,
+            input_dir = dir_input,
+            output_dir = dir_output
+  )
+  }else{
+    plot_ts_data(
             gravity_obs = gravityObservations_input_file,
             gravity_outside = gravity_response_outside_building,
             gravity_below = gravity_response_below_building,
@@ -339,6 +329,7 @@ if(plot_data){
             input_dir = dir_input,
             output_dir = dir_output
   )
+  }
 
   message("done.")
 }else{
@@ -354,20 +345,4 @@ message(dir_output)
 
 message("If gravity observation data was supplied, the data has been recuded automatically by the UmbrellaEffect results,
         and stored as well in the output directory")
-
-
-
-#' @title test
-#'
-#' @description test
-#'
-#' @param test
-#' @param test
-#' @param test
-#' 
-#' @return test
-#' 
-#' @details missing
-#' @references Marvin Reich (2017), mreich@@posteo.de
-#' @examples missing
 

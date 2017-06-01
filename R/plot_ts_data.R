@@ -20,24 +20,33 @@
 #' @examples missing
 
 plot_ts_data = function(
-            gravity_obs = gravityObservations_input_file,
-            gravity_outside = gravity_response_outside_building,
-            gravity_below = gravity_response_below_building,
-            gravity_reduced = gravity_data_reduced,
+            gravity_obs = NA,
+            gravity_outside,
+            gravity_below,
+            gravity_reduced = NA,
             input_dir = dir_input,
             output_dir = dir_output
 ){
     ## read in routine for gravity obs data
     # same as in function "reduce_gravity"
     # this time resulting in columns $datetime, $value
+    if(!is.na(gravity_obs)){
+        # read data
 
-    # combine datasets
-    gravity_data_all = rbind(
-            cbind(gravity_obs, Source = "Observed"),
-            cbind(gravity_outside, Source = "Outside"),
-            cbind(gravity_below, Source = "Below"),
-            cbind(gravity_reduced, Source = "Reduced")
-    )
+        # combine datasets
+        gravity_data_all = rbind(
+                cbind(gravity_obs, Source = "Observed"),
+                cbind(gravity_outside, Source = "Outside"),
+                cbind(gravity_below, Source = "Below"),
+                cbind(gravity_reduced, Source = "Reduced")
+        )
+    }else{
+        # combine datasets
+        gravity_data_all = rbind(
+                cbind(gravity_outside, Source = "Outside"),
+                cbind(gravity_below, Source = "Below")
+        )
+    }
 
     # plot
     gravity_ts.gg = ggplot(data = gravity_data_all,
@@ -45,21 +54,21 @@ plot_ts_data = function(
                     geom_line() + 
                     ylab("Gravity response [nm/s²]") + 
                     xlab("Time") + 
-                    colour_scale_manual(values = viridis(5)[4]) + 
+                    scale_color_manual(values = viridis(length(unique(gravity_data_all$Source)))) + 
                     theme(
                           legend.position = "right"
                           )
 
     # save plot
-    png(file = paste0(output_dir, "Gravity_timeseries.png"),
+    png(filename = paste0(output_dir, "Gravity_timeseries.png"),
                       width = 600,
                       height = 400,
                       res = 150)
     print(gravity_ts.gg)
     dev.off()
     # print on screen
-    print(gravity_ts.gg)
+    # plot(gravity_ts.gg)
     # return NULL
-    return(NULL)
+    return(gravity_ts.gg)
 }
 

@@ -24,13 +24,14 @@ reduction_hydScen_SGloc = function(
             MeanSoilMoisture
 ){
     # load reduction parameters
-    load(file="reduction_parameters.rData")
+    load(file="reduction_parameters_HydScen_SGloc.rData")
     # filter parameterset for chosen settings
     redParam_hydScen_SGloc = dplyr::filter(reduction_parameters,
                                                   Scenario == Hydro_condition,
                                                   SGlocation == SG_position)
     factor_ts = MeanSoilMoisture %>%
-                dplyr::mutate(fac1 = redParam_hydScen_SGloc$Intercept + redParam_hydScen_SGloc$Slope * value)
+                dplyr::mutate(fac1 = redParam_hydScen_SGloc$Intercept + redParam_hydScen_SGloc$Slope * value) %>%
+                dplyr::select(-value)
 
     return(factor_ts)
 }
