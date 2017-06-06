@@ -76,21 +76,21 @@ plot_data = TRUE
 
 ## Gravimeter location
 # in [m]
-SG_x = 5
-SG_y = 5
+SG_x = 3
+SG_y = 4
 SG_Z = 0
 SG_SensorHeight = 1.5 
 
 ## Model domain
 # in [m]
 # local grid or UTM, depending on the coordinates of the SG !
-Building_x = c(0, 10) # min, max
-Building_y = c(0, 10) # min, max
-grid3d_depth = c(0, 3) # min, max
+Building_x = c(0, 6) # min, max
+Building_y = c(0, 6) # min, max
+grid3d_depth = c(0, 2) # min, max
 
 ## Model discretization
 # in [m]
-grid3d_discr = data.frame(x = 0.1, y = 0.1, z = 0.1)
+grid3d_discr = data.frame(x = 1, y = 1, z = 1)
 
 ## Parameters for foundation of building
 # these include baseplate, walls, SG pillar(s)
@@ -101,7 +101,7 @@ Building_walls_z = 2 # extension
 Building_baseplate_z = c(0, .5) # min, max
 Building_SGpillar_x = c(2, 4) # min, max
 Building_SGpillar_y = c(3, 5) # min, max
-Building_SGpillar_z = c(0, 2.5) # min, max
+Building_SGpillar_z = c(0, 1) # min, max
 
 ## SG position
 # options are: Center, Corner, Side, Trans, Wettzell
@@ -308,7 +308,7 @@ if(gravityObservations_input_file == ""){
   message("Reducing gravity observation data..")
   
   gravity_data_reduced = reduce_gravity(
-            gravity_data = gravityObservations_input_file,
+            gravity_obs = gravityObservations_input_file,
             gravity_below = gravity_response_below_building,
             input_dir = dir_input
   )
@@ -361,4 +361,25 @@ message(dir_output)
 
 message("If gravity observation data was supplied, the data has been recuded automatically by the UmbrellaEffect results,
         and stored as well in the output directory")
+
+
+##########
+### prepare input TS data
+
+# sm = read_data(soilMoisture_input_file, dir_input)
+# sm_ts = unique(sm$datetime)
+# gg = read_data(gravityObservations_input_file, dir_input)
+# gg_ts = unique(gg$datatime)
+# sm = sm %>% dplyr::filter(datetime != 0)
+# change_dates = data.frame(
+#                           datetime = sm_ts[2:745],
+#                           datatime = gg_ts)
+# sm_mod = left_join(change_dates, sm)
+# SoilMoisture_input_1d = data.frame(
+#                                    datetime = sm_mod$datatime,
+#                                    z = sm_mod$z,
+#                                    data = sm_mod$value)
+# write.table(SoilMoisture_input_1d, file="SMdata_TS_1d.csv", row.names=F)
+# save(SoilMoisture_input_1d, file="SMdata_TS_1d.rdata")
+# getwd()
 

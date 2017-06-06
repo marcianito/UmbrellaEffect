@@ -27,6 +27,11 @@ plot_ts_data = function(
             input_dir = dir_input,
             output_dir = dir_output
 ){
+    gravity_obs = gravityObservations_input_file
+    gravity_outside = gravity_response_outside_building
+    gravity_below = gravity_response_below_building
+    gravity_reduced = gravity_data_reduced
+    input_dir = dir_input
     ## read in routine for gravity obs data
     # same as in function "reduce_gravity"
     # this time resulting in columns $datetime, $value

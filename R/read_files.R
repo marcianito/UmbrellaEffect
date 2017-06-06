@@ -68,8 +68,6 @@ read_rData = function(
                     ...
 ){
     # read .rData file
-    # data_in = "SMdata_TS_1d.rData"
-    # data_dir = "~/temp/UM/"
     file_in = load(file = paste0(data_dir, data_in))
     data_read = get(file_in)
 
@@ -152,8 +150,8 @@ read_tsf = function(
     data_input$datetime = as.POSIXct(data_input$datetime)
     # select column of gravity time series data
     data_read = data.frame(
-                            datatime = data_input$datetime,
-                            obs = data_input[,dat_col]
+                            datetime = data_input$datetime,
+                            value = data_input[,dat_col]
     )
     # transform 9999.999 values into NA, necessary!?
     # lysidata_raw[which(lysidata_raw[,7:10] == 9999.999,arr.ind=T)] = NA
