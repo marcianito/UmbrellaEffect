@@ -25,7 +25,9 @@ plot_ts_data = function(
             gravity_below,
             gravity_reduced = NA,
             input_dir = dir_input,
-            output_dir = dir_output
+            output_dir = dir_output,
+            dat_tsf = 7,
+            ...
 ){
     gravity_obs = gravityObservations_input_file
     gravity_outside = gravity_response_outside_building
@@ -37,7 +39,7 @@ plot_ts_data = function(
     # this time resulting in columns $datetime, $value
     if(!is.na(gravity_obs)){
         # read data
-        gravity_obs_data = read_data(gravity_obs, input_dir)
+        gravity_obs_data = read_data(gravity_obs, input_dir, dat_tsf = dat_tsf)
 
         # combine datasets
         gravity_data_all = rbind(

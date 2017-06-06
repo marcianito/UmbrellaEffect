@@ -28,8 +28,8 @@ library(roxygen2)
 setwd("/home/mreich/Dokumente/written/ResearchRepos/")
 load_all("UmbrellaEffect")
 # create docu
-setwd("/home/mreich/Dokumente/written/ResearchRepos/UmbrellaEffect")
-document()
+# setwd("/home/mreich/Dokumente/written/ResearchRepos/UmbrellaEffect")
+# document()
 # install package locally
 # not working !? -> use load_all() above
 # install()
@@ -108,7 +108,10 @@ Building_SGpillar_z = c(0, 1) # min, max
 SG_position = "Center"
 
 ## Hydrological site condition
-# options are: standard, Ksat anisotropy, Climate [dry, normal, wet], ...
+# options are: 
+# "Soil type sandy loam" , "Soil type silty loam", "Soil type clay loam" ; for soil type scenarios
+# "Anisotropy sandy loam", "", "" ; for anisotropy of hydraulic conductivity scenarios
+# "Climate AI=0.35", "Climate AI=0.575", "Climate AI=1.0", "Climate AI=2.0" ; for climate scenarios
 Hydro_condition = "Soil type sandy loam"
 
 ## Input files
@@ -118,8 +121,10 @@ Hydro_condition = "Soil type sandy loam"
 # in the vector, the order is: x, y, z
 spatial_col = c(NA, NA, 2)
 # in all cases, a column has to be specified, containing the observation data
-# columns of observation data
+# columns of observation data (in .csv and .rData files)
 data_col = 3
+# columns of observation data (in .tsf files)
+data_tsf = 13 
 # if the .csv has special characters for separating columns
 # or decimal places, etc.
 # the have to be EXPLICITLY specified in the read_data-function
@@ -132,7 +137,7 @@ data_col = 3
 # should be absolute
 # if left empty, a flat topographie will be assumed
 DEM_input_file = ""
-DEM_input_file = "WE_UP_TO_300m_05m.asc"
+# DEM_input_file = "WE_UP_TO_300m_05m.asc"
 
 ## Soil moisture data time series (observed or modelled)
 soilMoisture_input_file = "SMdata_TS_1d.rData"
@@ -310,12 +315,13 @@ if(gravityObservations_input_file == ""){
   gravity_data_reduced = reduce_gravity(
             gravity_obs = gravityObservations_input_file,
             gravity_below = gravity_response_below_building,
-            input_dir = dir_input
+            input_dir = dir_input,
+            dat_tsf = data_tsf
   )
   
   if(output_type == "csv"){
       save(gravity_data_reduced, file=paste0(dir_output, "gravity_data_reduced.rData"))
-      write.table(...)
+      write.table(gravity_data_reduced, file=paste0(dir_output, "gravity_data_reduced.csv"), row.names = F)
   }else{
       save(gravity_data_reduced, file=paste0(dir_output, "gravity_data_reduced.rData"))
   }
@@ -343,7 +349,8 @@ if(plot_data){
             gravity_below = gravity_response_below_building,
             gravity_reduced = gravity_data_reduced,
             input_dir = dir_input,
-            output_dir = dir_output
+            output_dir = dir_output,
+            dat_tsf = data_tsf
   )
   }
 
@@ -360,7 +367,7 @@ message("Please have a look at the output file, located at: ")
 message(dir_output)
 
 message("If gravity observation data was supplied, the data has been recuded automatically by the UmbrellaEffect results,
-        and stored as well in the output directory")
+and stored as well in the output directory.")
 
 
 ##########
@@ -383,3 +390,7 @@ message("If gravity observation data was supplied, the data has been recuded aut
 # save(SoilMoisture_input_1d, file="SMdata_TS_1d.rdata")
 # getwd()
 
+# tt = read_data(data_in = gravityObservations_input_file,
+#                data_dir = dir_input,
+#                dat_tsf = data_tsf
+# )

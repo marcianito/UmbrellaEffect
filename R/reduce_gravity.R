@@ -19,10 +19,15 @@ reduce_gravity = function(
             gravity_obs,
             gravity_below,
             input_dir,
+            dat_tsf = 7,
             ...
 ){
     # load gravity observations
-    gravity_obs_data = read_data(gravity_obs, input_dir)
+    gravity_obs_data = read_data(gravity_obs, input_dir, dat_tsf = dat_tsf)
+    # change column name to enable join
+    gravity_obs_data = gravity_obs_data %>%
+        dplyr::mutate(obs = value) %>%
+        dplyr::select(-value)
 
     # reduce observed data by gravity reponse from below building
     gravity_reduced = dplyr::inner_join(gravity_obs_data, gravity_below) %>%

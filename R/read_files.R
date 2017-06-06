@@ -24,6 +24,7 @@ read_data = function(
                     data_dir,
                     spat_col = c(NA, NA, 2),
                     dat_col = 3,
+                    dat_tsf = 7,
                     ...
 ){
     # .rData, .csv, .tsf, 
@@ -39,7 +40,7 @@ read_data = function(
               read_csv(data_in, data_dir, spat_col, dat_col, ...)
            },
            tsf = {
-              read_tsf(data_in, data_dir, dat_col, ...)
+              read_tsf(data_in, data_dir, dat_tsf, ...)
            }
     )
 
@@ -63,8 +64,8 @@ read_data = function(
 read_rData = function(
                     data_in,
                     data_dir,
-                    spat_col = c(NA, NA, 2),
-                    dat_col = 3,
+                    spat_col,
+                    dat_col,
                     ...
 ){
     # read .rData file
@@ -100,8 +101,8 @@ read_rData = function(
 read_csv = function(
                     data_in,
                     data_dir,
-                    spat_col = c(NA, NA, 2),
-                    dat_col = 3,
+                    spat_col,
+                    dat_col,
                     ...
 ){
     # read .csv file
@@ -135,7 +136,7 @@ read_csv = function(
 read_tsf = function(
                     data_in,
                     data_dir,
-                    dat_col = 7,
+                    dat_tsf,
                     ...
 ){
     # determine number of rows to skip
@@ -151,7 +152,7 @@ read_tsf = function(
     # select column of gravity time series data
     data_read = data.frame(
                             datetime = data_input$datetime,
-                            value = data_input[,dat_col]
+                            value = data_input[,dat_tsf]
     )
     # transform 9999.999 values into NA, necessary!?
     # lysidata_raw[which(lysidata_raw[,7:10] == 9999.999,arr.ind=T)] = NA
