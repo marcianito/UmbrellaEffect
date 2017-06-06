@@ -42,7 +42,7 @@ library(xts)
 library(dplyr)
 library(raster)
 # library(UmbrellaEffect)
-library(reshape2)
+# library(reshape2)
 library(ggplot2)
 library(viridis)
 library(gstat)
@@ -81,13 +81,6 @@ SG_y = 5
 SG_Z = 0
 SG_SensorHeight = 1.5 
 
-## DEM input file
-# file name including its path
-# should be absolute
-# if left empty, a flat topographie will be assumed
-DEM_input_file = ""
-DEM_input_file = "WE_UP_TO_300m_05m.asc"
-
 ## Model domain
 # in [m]
 # local grid or UTM, depending on the coordinates of the SG !
@@ -118,12 +111,35 @@ SG_position = "Center"
 # options are: standard, Ksat anisotropy, Climate [dry, normal, wet], ...
 Hydro_condition = "Soil type sandy loam"
 
+## Input files
+## general settings
+# in case using .csv data, the special information has to supplied, in which columns the spatial information is stored
+# the settings below are valid for 1d data files
+# in the vector, the order is: x, y, z
+spatial_col = c(NA, NA, 2)
+# in all cases, a column has to be specified, containing the observation data
+# columns of observation data
+data_col = 3
+# if the .csv has special characters for separating columns
+# or decimal places, etc.
+# the have to be EXPLICITLY specified in the read_data-function
+# using sep = "??"
+# using dec = "??"
+# for further usage see ?read.csv
+
+## DEM input file
+# file name including its path
+# should be absolute
+# if left empty, a flat topographie will be assumed
+DEM_input_file = ""
+DEM_input_file = "WE_UP_TO_300m_05m.asc"
+
 ## Soil moisture data time series (observed or modelled)
-soilMoisture_input_file = ""
+soilMoisture_input_file = "SMdata_TS_1d.rData"
 
 ## Observed gravity data time series
 # this is optional and can be left empty if no automatized reduction is desired
-gravityObservations_input_file = ""
+gravityObservations_input_file = "SG030_TS_1month.tsf"
 
 message("done.")
 ## end SETUP

@@ -32,10 +32,11 @@ plot_ts_data = function(
     # this time resulting in columns $datetime, $value
     if(!is.na(gravity_obs)){
         # read data
+        gravity_obs_data = read_data(gravity_obs, input_dir)
 
         # combine datasets
         gravity_data_all = rbind(
-                cbind(gravity_obs, Source = "Observed"),
+                cbind(gravity_obs_data, Source = "Observed"),
                 cbind(gravity_outside, Source = "Outside"),
                 cbind(gravity_below, Source = "Below"),
                 cbind(gravity_reduced, Source = "Reduced")

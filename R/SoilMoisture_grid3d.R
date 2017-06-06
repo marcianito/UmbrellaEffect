@@ -24,20 +24,8 @@ SoilMoisture_grid3d = function(
             input_dir,
             ... # should be able to pass stuff like sep="", etc.
 ){
-    # include various routines to read
-    # different file types:
-    # .rData, .csv, .tsf, 
-    # find input file type (extension)
-
-    # file_type = strsplit(soilMoisture_input, ".", fixed = TRUE)
-    # file_type = file_type[[length(file_type)]]
-    # switch(file_type,
-    #        rData = {},
-    #        csv = {},
-    #        tsf = {}
-    # )
-    # 
-    # SMdata_in = 
+    # read input data
+    SMdata_in = read_data(soilMoisture_input, input_dir)
 
     ## probably the best to average all available 1 d
     # data per depth layer and then
@@ -45,7 +33,7 @@ SoilMoisture_grid3d = function(
     # how to process when someone has 3d data !?
     # how if someone has 2d model data?
 
-    # round data to make use join is performed corretely !
+    # round data to make use join is performed correctly !
     # round_z = decimalplaces(grid_discretization$z)
     # SMdata_in$Depth = round(SMdata_in$Depth, round_z)
 
@@ -56,19 +44,37 @@ SoilMoisture_grid3d = function(
     #                       layer = unique(grid_domain$layer),
     #                       Depth = unique(grid_domain$Depth)
     # )
-    testdata = data.frame(Depth = rep(round(c(0,0.5,1,1.5,2,2.5,3),1),2),
-                          value = rep(c(.25,.28,.3,.27,.25,.2,.15),2),
-                          datetime = c(rep(1,7),rep(2,7)))
+    # testdata = data.frame(Depth = rep(round(c(0,0.5,1,1.5,2,2.5,3),1),2),
+    #                       value = rep(c(.25,.28,.3,.27,.25,.2,.15),2),
+    #                       datetime = c(rep(1,7),rep(2,7)))
+    # # create results data.frame
+    # SMdata = data.frame(
+    #                     datetime = rep(unique(testdata$datetime), each = length(unique(grid_domain$Depth))),
+    #                     layer = rep(unique(grid_domain$layer), length(unique(testdata$datetime))),
+    #                     value = NA
+    # )
+    # # run for every timestep
+    # for(ts in unique(testdata$datetime)){
+    # # subset SM data
+    # SM_sub = dplyr::filter(testdata, datetime == ts) %>%
+    #          dplyr::select(-datetime)
+    # # interpolate data to new resolution
+    # SM_int_tmp = approx(SM_sub, xout = unique(grid_domain$Depth))
+    # # SM_int_tmp = approx(SM_sub, xout = grid_new$Depth)
+    # # combine data
+    # SMdata$value[which(SMdata$datetime == ts)] = SM_int_tmp$y
+    # }
+
     # create results data.frame
     SMdata = data.frame(
-                        datetime = rep(unique(testdata$datetime), each = length(unique(grid_domain$Depth))),
-                        layer = rep(unique(grid_domain$layer), length(unique(testdata$datetime))),
+                        datetime = rep(unique(SMdata_in$datetime), each = length(unique(grid_domain$Depth))),
+                        layer = rep(unique(grid_domain$layer), length(unique(SMdata_in$datetime))),
                         value = NA
     )
     # run for every timestep
-    for(ts in unique(testdata$datetime)){
+    for(ts in unique(SMdata_in$datetime)){
     # subset SM data
-    SM_sub = dplyr::filter(testdata, datetime == ts) %>%
+    SM_sub = dplyr::filter(SMdata_in, datetime == ts) %>%
              dplyr::select(-datetime)
     # interpolate data to new resolution
     SM_int_tmp = approx(SM_sub, xout = unique(grid_domain$Depth))

@@ -4,14 +4,16 @@
 \alias{SoilMoisture_grid3d}
 \title{Soil moisture grid (3d)}
 \usage{
-SoilMoisture_grid3d(grid_domain = gravity_component_grid3d,
-  soilMoisture_input = soilMoisture_input_file, input_dir = dir_input, ...)
+SoilMoisture_grid3d(grid_domain, soilMoisture_input, grid_discretization,
+  grid_depth, input_dir, ...)
 }
 \arguments{
 \item{grid_domain}{Data.frame, constructed with minimum 3 columns (x,y,z) which describe spatial dimensions of 3d grid.}
 
 \item{soilMoisture_input}{Name of file, containing the soil moisture time series.
 This file has to contain minimal 2 columns (datetime and z) but can optionally also contain (x and/or y), if a higher dimensional soil moisture dataset is available.}
+
+\item{grid_discretization}{data.frame with columns (x,y,z), indicating the discretization in the corresponding direction.}
 
 \item{input_dir}{Directory where}
 }

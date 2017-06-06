@@ -6,7 +6,7 @@
 #' @param data_input data to be interpolated. in fomat of the hydrus mesh.
 #' @param grid_discr vector of discretization of new grid in (x,y,z).
 #' @details missing
-#' @references Marvin Reich (2016), mreich@@gfz-potsdam.de
+#' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
 
 convert_demtodf = function(dem, dem.info){
@@ -25,7 +25,7 @@ return(dem.melt)
 #' @description Converting zoo-object to data frame with proper indexing of time column and column names
 #'
 #' @param value must be a zoo-object
-#' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
+#' @references Marvin Reich (2017), mreich@@posteo.de
 # ' @examples examples MISSING
 #' 
 zootodf <- function(value) {
@@ -42,7 +42,7 @@ zootodf <- function(value) {
 #'
 #' @param x Numeric, the number to check decimal places.
 #' @details missing
-#' @references Marvin Reich (2016), mreich@@gfz-potsdam.de
+#' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
 
 decimalplaces <- function(x) {

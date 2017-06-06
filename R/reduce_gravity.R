@@ -21,19 +21,13 @@ reduce_gravity = function(
             input_dir,
             ...
 ){
-    ## as in function for SM-data:
-    # reading-in routine for various file types
-    # load gravity_data
-    load(file=paste0(input_dir, gravity_data)) 
-    read.table(file=paste0(input_dir, gravity_data)) 
-    # resulting in data.frame with datetime and obs
+    # load gravity observations
+    gravity_obs_data = read_data(gravity_obs, input_dir)
 
-
-
-    gravity_reduced = dplyr::inner_join(gravity_obs, gravity_below) %>%
+    # reduce observed data by gravity reponse from below building
+    gravity_reduced = dplyr::inner_join(gravity_obs_data, gravity_below) %>%
         dplyr::mutate(value = obs - value) %>%
         dplyr::select(-obs)
 
     return(gravity_reduced)
 }
-

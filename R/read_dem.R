@@ -7,7 +7,7 @@
 #' 
 #' @details So far only it is only possible to read DEM-file in .asc arquitecture format.
 #' @details Outputs files: data.DEM, info.DEM (as data.frames).
-#' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
+#' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
  
 read_dem = function(dempath, filename){

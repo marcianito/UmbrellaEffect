@@ -25,8 +25,8 @@ gravity_comp_grid = function(
     grid3d = surface_to_grid3d(
             surface_grid = surface,
             grid_discr = grid_discretization,
-            depth_split = grid_depth) #,
-            # T, surface)
+            depth_split = grid_depth
+    )
     # generate gravity component grid
     gcomp_grid = fill_gcompgrid(
             g_grid = grid3d,
@@ -57,13 +57,13 @@ gravity_comp_grid = function(
 #' @param senloc coordinates of gravity sensor location. data.frame with x,y,z columns.
 #' @param g_discr discretization of g_grid in differences in x,y,and z-direction. they have to be uniform steps!
 #' @details missing
-#' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
+#' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples example MISSING
 #' @export
 
 fill_gcompgrid <- function(g_grid, senloc, g_discr){
 #constants
-gama <- 6.673e-11 #m³/(kg*s²)
+gamma <- 6.673e-11 #m³/(kg*s²)
 rho <- 1000 #kg/m³
 #w <- 1e8 #gravity units µGal
 w <- 1e9 #gravity units nm/s²
@@ -93,27 +93,36 @@ layern_max = max(g_grid$layer)
 # rowwise
 g_grid = g_grid %>%
 	rowwise() %>%
-	mutate(gcomp = select_gMethod_Edges(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gama,rho,w)) %>%
+	mutate(gcomp = select_gMethod_Edges(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gamma,rho,w)) %>%
 	ungroup()
 
 return(g_grid)
 }
 
-#' @title choose method for computing gravity component for a cell of a grid
+#' @title Choose method for computing gravity component for a cell of a grid
 #'
-#' @description After calculating the gravity components (gcomp()), this function can be used to get real values using soil moisture data (theta). The output of the gravity signal is possible in different dimensions. 
+#' @description test
 #'
-#' @param gcompfiles vector containing the names (complete paths or relative) of the gravity component files to be used for calculations. These files are generated using gcomp().
-#' @param theta data.frame with column structure $time, $timestep, $theta (value), $layer
-#' @param output Defines the output to be a singel value, layer or grid (default is value)
+#' @param xloc  t
+#' @param yloc  t
+#' @param zloc  t
+#' @param gloc  t
+#' @param gdiscr  t
+#' @param edge t
+#' @param layer  t
+#' @param layermax  t
+#' @param r_inner  t
+#' @param r_outer  t
+#' @param gamma t
+#' @param rho t
+#' @param w t
 #' ...
-#' @details Usually one needs relative gravity signals, therefore the inputed theta timeseries should be acutally delta theta vaules per timestep. The
-#' other option is calculating the differences in values per timestep of the output of this function.
-#' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
+#' @details test
+#' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing 
 #' @export
 #' 
-select_gMethod_Edges = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, layermax, r_inner, r_outer,gama,rho,w){
+select_gMethod_Edges = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, layermax, r_inner, r_outer, gamma, rho, w){
         #distances
         rad = sqrt((xloc-gloc$x)^2+(yloc-gloc$y)^2+(zloc-gloc$z)^2) #radial distance to SG
         r2=rad^2
@@ -142,7 +151,7 @@ select_gMethod_Edges = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, lay
 		Zint = zloc+(0.5*gdiscr$z)
 		Zend = zloc-(0.5*gdiscr$z)
 		}
-           gcomp_cell=forsberg_raw(gama,w,xl,xr,yl,yr,Zint,Zend,gloc$x,gloc$y,gloc$z,rho) #unit depends on w
+           gcomp_cell=forsberg_raw(gamma,w,xl,xr,yl,yr,Zint,Zend,gloc$x,gloc$y,gloc$z,rho) #unit depends on w
         }
          #if(f2>r2macm){ #very far from SG
          if(rad >= r_outer){ #very far from SG
@@ -164,7 +173,7 @@ select_gMethod_Edges = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, lay
 		 zloc_mid = zloc
 		 zdiscr = gdiscr$z
 		}
-           gcomp_cell=pointmass(gama,zloc_mid,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
+           gcomp_cell=pointmass(gamma,zloc_mid,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
         }
         #if(f2>r2exac & f2<r2macm){ #in the "middlle"
         if(rad > r_inner & rad < r_outer){ #in the "middlle"
@@ -186,7 +195,7 @@ select_gMethod_Edges = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, lay
 		 zloc_mid = zloc
 		 zdiscr = gdiscr$z
 		}
-           gcomp_cell=macmillan_raw(gama,xloc,yloc,zloc_mid,gloc$x,gloc$y,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
+           gcomp_cell=macmillan_raw(gamma,xloc,yloc,zloc_mid,gloc$x,gloc$y,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
         }
 # output one value: gravity component for corresponding input cell
 return (gcomp_cell)

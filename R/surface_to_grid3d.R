@@ -6,7 +6,7 @@
 #' @param data_input data to be interpolated. in fomat of the hydrus mesh.
 #' @param grid_discr vector of discretization of new grid in (x,y,z).
 #' @details missing
-#' @references Marvin Reich (2016), mreich@@gfz-potsdam.de
+#' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
 
 surface_to_grid3d = function(
@@ -36,7 +36,7 @@ surface_to_grid3d = function(
     grid3d = cbind(grid.xyz[,1:2],
                    z=surface[,3] - grid.xyz$z,
                    Depth=grid.xyz$z, 
-                   layer=rep(seq(1,length(grid.z), by=1),each=length(surface_grid$x))
+                   layer=rep(seq(1,length(grid.z), by=1),each=length(grid.xyz$x))
                    )
     return(grid3d)
 }
