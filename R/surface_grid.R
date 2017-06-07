@@ -24,6 +24,11 @@ surface_grid = function(
             output_dir,
             ...
 ){
+    # grid_domain_x = Building_x
+    # grid_domain_y = Building_y
+    # DEM = DEM_input_file
+    # input_dir = dir_input
+
     ## check if DEM is non-empty, if not return NULL
     if(DEM == ""){
         surface_grid = NULL
@@ -43,13 +48,16 @@ surface_grid = function(
                                  )
         extent_grid_domain = extent(grid_domain)
         # limit DEM to extent of SG building
-        dem_grid_domain = crop(dem_raster, extent_grid_domain)
+        # dem_grid_domain = crop(dem_raster, extent_grid_domain)
+        # DEM had to be snapped, in order to get the correct number of elements (its extent)
+        # as a non-DEM surface grid on the basis of Building_x,y
+        dem_grid_domain = crop(dem_raster, extent_grid_domain, snap= "out")
         writeRaster(dem_grid_domain, filename = paste0(output_dir, "dem_grid"), format="ascii", NAflag=-9999, overwrite=T)
         
         # reload grid for verification
         # in order to create the surface grid
         ## ! here has to be found a more straight forward way,
-        # going directly from dem_grid_domain to surface_grid,
+        # going directly from dem_grid_domain to surface_grid
         # WITHOUT writing a physical file !!
         dem_grid_file = "dem_grid.asc" 
         read_dem(output_dir, dem_grid_file)

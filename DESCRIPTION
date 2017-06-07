@@ -8,7 +8,14 @@ Description: Presents an easy way to reduce superconducting gravimeter measureme
 Depends: R (>= 3.3.1)
 Imports: dplyr,
          raster,
-         zoo 
+         zoo,
+         xts,
+         reshape2,
+         ggplot2,
+         viridis,
+         gstat,
+         ptinpoly,
+         devtools
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

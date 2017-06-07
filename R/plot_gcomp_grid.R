@@ -19,14 +19,14 @@ plot_gcomp_grid = function(
             output_dir,
             ...
 ){
-    grid_input = as.data.frame(gravity_component_grid3d)
-    yloc = round(SG_y, 1)
-    tt = unique(gravity_component_grid3d$y)
-    tt = unique(grid_transect$x)
-    round(tt[5],1) == yloc
-    round(tt[3],1) - yloc < 0.25
-    # look at duplicates
-    dup = which(duplicated(grid_input[,1:3]))
+    # grid_input = as.data.frame(gravity_component_grid3d)
+    # yloc = round(SG_y, 1)
+    # tt = unique(gravity_component_grid3d$y)
+    # tt = unique(grid_transect$x)
+    # round(tt[5],1) == yloc
+    # round(tt[3],1) - yloc < 0.25
+    # # look at duplicates
+    # dup = which(duplicated(grid_input[,1:3]))
 
     # reduce grid to one 2d transect along yloc
     grid_transect = grid_input %>%
@@ -36,10 +36,10 @@ plot_gcomp_grid = function(
         dplyr::filter(abs(y_exclude) < .9) %>%
         dplyr::mutate(gcomp = ifelse(gcomp == 0, NA, gcomp)) %>%
         ggplot(aes(x = x, y = z)) + 
-        # geom_tile(aes(fill = gcomp)) + 
-        # scale_fill_gradient(low = viridis(10)[3], high = viridis(10)[8], na.value = "gray") + 
-        geom_point(aes(colour = gcomp)) +
-        scale_color_gradient(low = viridis(10)[3], high = viridis(10)[8], na.value = "gray") + 
+        geom_tile(aes(fill = gcomp)) + 
+        scale_fill_gradient(low = viridis(10)[3], high = viridis(10)[8], na.value = "gray") + 
+        # geom_point(aes(colour = gcomp)) +
+        # scale_color_gradient(low = viridis(10)[3], high = viridis(10)[8], na.value = "gray") + 
         ylab("Depth") + xlab("Grid x-axis") + 
         labs(fill = "Gravity component")
 

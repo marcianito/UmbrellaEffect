@@ -223,12 +223,25 @@ gravity_component_grid3d = correct_SGbuilding_foundation(
             grid_discretization = grid3d_discr
 )
 
+# rel.coord system: gcomp == 0 are 627
+# UTM.coord system: gcomp == 0 are 429
+length(which(gravity_component_grid3d$gcomp == 0))
+# poblematic:
+max(gravity_component_grid3d$z) - max(Building_baseplate_z)
+min(gravity_component_grid3d$x) - min(Building_x)
+min(gravity_component_grid3d$y) - min(Building_y)
+# rounded: not solving problem
+round(min(gravity_component_grid3d$x),1) - round(min(Building_x),1)
+round(min(gravity_component_grid3d$y),1) - round(min(Building_y),1)
+# not problematic:
+max(gravity_component_grid3d$y) > max(Building_y)
+max(gravity_component_grid3d$x) > max(Building_x)
+
 if(plot_data){
   message("Plotting transect of gravity component grid and saving plot to output directory..")
-  y_plot = round(SG_y, 1)
   plot_gcomp_grid(
                   grid_input = gravity_component_grid3d,
-                  yloc = y_plot,
+                  yloc = SG_y,
                   output_dir = dir_output
 )
 }
