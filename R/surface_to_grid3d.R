@@ -14,29 +14,36 @@ surface_to_grid3d = function(
             grid_discr,
             depth_split
 ){
-    # library(gstat)
+    # decide if a surface grid is supplied
     if(!is.null(surface_grid)){
-    	grid.z = seq(min(depth_split), max(depth_split), by=grid_discr$z)
+    	grid.z = rev(seq(min(depth_split), max(depth_split), by=grid_discr$z))
     	grid.xyz = data.frame(x=rep(surface_grid$x,length(grid.z)),
                                y=rep(surface_grid$y,length(grid.z)),
                                z=rep(grid.z, each=length(surface_grid[,1])))
+    # # interpolate surface data to new grid in 3d
+    # idw.gstat = gstat(formula = z ~ 1, locations = ~ x + y, data = surface_grid, nmax = 4, set = list(idp = 2))
+    # surface = predict(idw.gstat, grid.xyz)
+    # grid3d = cbind(grid.xyz[,1:2],
+    #                z=surface[,3] + grid.xyz$z,
+    #                Depth=grid.xyz$z, 
+    #                layer=rep(seq(1,length(grid.z), by=1),each=length(grid.xyz$x))
+    #                )
     }else{
     	grid.x = seq(min(Building_x), max(Building_x), by=grid_discr$x)
     	grid.y = seq(min(Building_y), max(Building_y), by=grid_discr$y)
-    	grid.z = seq(min(depth_split), max(depth_split), by=grid_discr$z)
+    	grid.z = rev(seq(min(depth_split), max(depth_split), by=grid_discr$z))
     	grid.xyz = expand.grid(x=grid.x, y=grid.y, z=grid.z)
-        # surface_grid = expand.grid(x=grid.x, y=grid.y)
+        surface_grid = expand.grid(x=grid.x, y=grid.y, z = max(depth_split))
+   
     }
-    
     # interpolate surface data to new grid in 3d
-    # idw.gstat = gstat(formula = z ~ 1, locations = ~ x + y, data = surface_grid, nmax = 4, set = list(idp = 2))
-    # surface = predict(idw.gstat, surface_grid)
-    idw.gstat = gstat(formula = z ~ 1, locations = ~ x + y, data = grid.xyz, nmax = 4, set = list(idp = 2))
+    idw.gstat = gstat(formula = z ~ 1, locations = ~ x + y, data = surface_grid, nmax = 4, set = list(idp = 2))
     surface = predict(idw.gstat, grid.xyz)
     grid3d = cbind(grid.xyz[,1:2],
-                   z=surface[,3] - grid.xyz$z,
+                   z=surface[,3] + grid.xyz$z,
                    Depth=grid.xyz$z, 
                    layer=rep(seq(1,length(grid.z), by=1),each=length(grid.xyz$x))
                    )
+
     return(grid3d)
 }

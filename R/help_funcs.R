@@ -53,6 +53,32 @@ decimalplaces <- function(x) {
     }
 }
 
+#' @title Construct vertices for SG building foundation
+#'
+#' @description Following ptinpoly-packages, this function creates vertices
+#' which can be used to correct gravity component grids for building structures
+# (e.g. SG pillar, building baseplate, building walls, etc.).
+#'
+#' @param x,y,z_cords Vector, holding min and max values of the x,y and z points which fix the polyheder.
+#' @details missing
+#' @references Marvin Reich (2017), mreich@@posteo.de
+#' @examples missing
+
+construct_vertices = function(
+                    x_cords,
+                    y_cords,
+                    z_cords
+){
+    vertice = as.matrix(data.frame(
+            x = c(min(x_cords), min(x_cords), min(x_cords), min(x_cords), max(x_cords), max(x_cords), max(x_cords), max(x_cords)),
+            y = c(min(y_cords), min(y_cords), max(y_cords), max(y_cords), min(y_cords), min(y_cords), max(y_cords), max(y_cords)),
+            z = c(min(z_cords), max(z_cords), min(z_cords), max(z_cords), min(z_cords), max(z_cords), min(z_cords), max(z_cords))
+    ))
+    return(vertice)
+}
+
+
+
 ##############################
 ## some random
 

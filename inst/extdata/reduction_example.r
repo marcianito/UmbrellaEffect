@@ -24,10 +24,10 @@
 ## developing
 # library(HyGra)
 library(devtools)
-library(roxygen2)
 setwd("/home/mreich/Dokumente/written/ResearchRepos/")
 load_all("UmbrellaEffect")
 # create docu
+# library(roxygen2)
 # setwd("/home/mreich/Dokumente/written/ResearchRepos/UmbrellaEffect")
 # document()
 # install package locally
@@ -42,20 +42,13 @@ library(xts)
 library(dplyr)
 library(raster)
 # library(UmbrellaEffect)
-# library(reshape2)
+library(reshape2)
 library(ggplot2)
 library(viridis)
 library(gstat)
+library(ptinpoly)
 message("done.")
 ####################
-
-# # library(dyplrExtras)
-# library(grid)
-# library(gridExtra)
-# library(scales)
-# # library(tables)
-# library(RColorBrewer)
-# # library(xtable)
 
 #########################################
 ## SETUP
@@ -76,32 +69,48 @@ plot_data = TRUE
 
 ## Gravimeter location
 # in [m]
-SG_x = 3
-SG_y = 4
-SG_Z = 0
+# relativ, local coordinate sytem
+# SG_x = 3
+# SG_y = 4
+# SG_Z = 0
+# UTM coordinate system
+SG_x = 4564041.87 
+SG_y = 5445662.88 
+SG_Z = 606.471
 SG_SensorHeight = 1.5 
 
 ## Model domain
 # in [m]
 # local grid or UTM, depending on the coordinates of the SG !
-Building_x = c(0, 6) # min, max
-Building_y = c(0, 6) # min, max
-grid3d_depth = c(0, 2) # min, max
+# Building_x = c(0, 6) # min, max
+# Building_y = c(0, 6) # min, max
+# grid3d_depth = c(-3, 0) # min, max
+# UTM
+Building_x = c(SG_x - 3, SG_x + 3) # min, max
+Building_y = c(SG_y - 3, SG_y + 3) # min, max
+# grid3d_depth = c(SG_Z, SG_Z - 3) # min, max
 
 ## Model discretization
 # in [m]
-grid3d_discr = data.frame(x = 1, y = 1, z = 1)
+grid3d_discr = data.frame(x = .5, y = .5, z = .5)
+grid3d_depth = c(-3, 0) # min, max
 
 ## Parameters for foundation of building
 # these include baseplate, walls, SG pillar(s)
 # please use same units as in DEM and model domain
 Building_walls_x = .5 # extension
-Building_walls_y = .2 # extension 
-Building_walls_z = 2 # extension
-Building_baseplate_z = c(0, .5) # min, max
-Building_SGpillar_x = c(2, 4) # min, max
-Building_SGpillar_y = c(3, 5) # min, max
-Building_SGpillar_z = c(0, 1) # min, max
+Building_walls_y = .5 # extension 
+Building_walls_z = 1.5 # extension
+# local grid
+# Building_baseplate_z = c(-.5, 0) # min, max
+# Building_SGpillar_x = c(2, 4) # min, max
+# Building_SGpillar_y = c(3, 5) # min, max
+# Building_SGpillar_z = c(-1, 0) # min, max
+# UTM
+Building_baseplate_z = c(SG_Z - .5, SG_Z) # min, max
+Building_SGpillar_x = c(SG_x - 1, SG_x + 1) # min, max
+Building_SGpillar_y = c(SG_y - 1, SG_y + 1) # min, max
+Building_SGpillar_z = c(SG_Z - 1, SG_Z) # min, max
 
 ## SG position
 # options are: Center, Corner, Side, Trans, Wettzell
@@ -136,8 +145,8 @@ data_tsf = 13
 # file name including its path
 # should be absolute
 # if left empty, a flat topographie will be assumed
-DEM_input_file = ""
-# DEM_input_file = "WE_UP_TO_300m_05m.asc"
+# DEM_input_file = ""
+DEM_input_file = "WE_UP_TO_300m_05m.asc"
 
 ## Soil moisture data time series (observed or modelled)
 soilMoisture_input_file = "SMdata_TS_1d.rData"
@@ -196,11 +205,12 @@ gravity_component_grid3d = gravity_comp_grid(
 
 message("done.")
 #########################################
-# Generate foundation of SG building (baseplate, walls & SG pillar)
+## Correct gravity component grid for SG building foundation
 #########################################
-message("Generate foundation of SG building (baseplate, walls & SG pillar)..")
+message("Correct gravity component grid for SG building foundation..")
 
-SGbuilding_foundation = building_foundation(
+gravity_component_grid3d = correct_SGbuilding_foundation(
+            gravity_gcomp = gravity_component_grid3d,
             Bdwall_ext_x = Building_walls_x,
             Bdwall_ext_y = Building_walls_y,
             Bdwall_ext_z = Building_walls_z,
@@ -210,19 +220,18 @@ SGbuilding_foundation = building_foundation(
             Pillar_x = Building_SGpillar_x,
             Pillar_y = Building_SGpillar_y,
             Pillar_z = Building_SGpillar_z,
-            grid_discretizaion = grid3d_discr
+            grid_discretization = grid3d_discr
 )
 
-message("done.")
-#########################################
-## Correct gravity component grid for SG building foundation
-#########################################
-message("Correct gravity component grid for SG building foundation..")
-
-gravity_component_grid3d = correct_SGbuilding_foundation(
-            gravity_gcomp = gravity_component_grid3d,
-            building_foundation = SGbuilding_foundation
+if(plot_data){
+  message("Plotting transect of gravity component grid and saving plot to output directory..")
+  y_plot = round(SG_y, 1)
+  plot_gcomp_grid(
+                  grid_input = gravity_component_grid3d,
+                  yloc = y_plot,
+                  output_dir = dir_output
 )
+}
 
 message("done.")
 #########################################

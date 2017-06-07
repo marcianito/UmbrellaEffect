@@ -26,32 +26,51 @@ building_foundation = function(
             Pillar_x,
             Pillar_y,
             Pillar_z,
-            grid_discretizaion
+            grid_discretization
 ){
+    # Bdwall_ext_x = Building_walls_x
+    # Bdwall_ext_y = Building_walls_y
+    # Bdwall_ext_z = Building_walls_z
+    # Bdbase_x = Building_x
+    # Bdbase_y = Building_y
+    # Bdbase_z = Building_baseplate_z
+    # Pillar_x = Building_SGpillar_x
+    # Pillar_y = Building_SGpillar_y
+    # Pillar_z = Building_SGpillar_z
+    # grid_discretization = grid3d_discr
+
     # building walls
-    x.walls = seq(min(Bdbase_x),max(Bdbase_x),by=grid_discretizaion$x)
-    yx.walls = c(seq(min(Bdbase_x),(min(Bdbase_x) + Bdwall_ext_y),by=grid_discretizaion$y),seq((max(Bdbase_x) - Bdwall_ext_y),max(Bdbase_x),by=grid_discretizaion$y))
-    y.walls = seq(min(Bdbase_y),max(Bdbase_y), by=grid_discretizaion$y)
-    xy.walls = c(seq(min(Bdbase_y),(min(Bdbase_y) + Bdwall_ext_x),by=grid_discretizaion$x),seq((max(Bdbase_y) - Bdwall_ext_x),max(Bdbase_y),by=grid_discretizaion$x))
-    z.walls = seq(min(Bdbase_z),(min(Bdbase_z) + Bdwall_ext_z), by=grid_discretizaion$z)
+    x.walls = seq(min(Bdbase_x),max(Bdbase_x),by=grid_discretization$x)
+    yx.walls = c(seq(min(Bdbase_x),(min(Bdbase_x) + Bdwall_ext_y),by=grid_discretization$y),seq((max(Bdbase_x) - Bdwall_ext_y),max(Bdbase_x),by=grid_discretization$y))
+    y.walls = seq(min(Bdbase_y),max(Bdbase_y), by=grid_discretization$y)
+    xy.walls = c(seq(min(Bdbase_y),(min(Bdbase_y) + Bdwall_ext_x),by=grid_discretization$x),seq((max(Bdbase_y) - Bdwall_ext_x),max(Bdbase_y),by=grid_discretization$x))
+    z.walls = seq((min(Bdbase_z) - Bdwall_ext_z),min(Bdbase_z), by=grid_discretization$z)
     walls.x = expand.grid(x=x.walls, y=xy.walls, z=z.walls)
     walls.y = expand.grid(x=yx.walls, y=y.walls, z=z.walls)
     # building baseplat
-    x.base = seq(min(Bdbase_x),max(Bdbase_x), by=grid_discretizaion$x)
-    y.base = seq(min(Bdbase_y),max(Bdbase_y), by=grid_discretizaion$y)
-    z.base = seq(min(Bdbase_z),max(Bdbase_z), by=grid_discretizaion$z)
+    x.base = seq(min(Bdbase_x),max(Bdbase_x), by=grid_discretization$x)
+    y.base = seq(min(Bdbase_y),max(Bdbase_y), by=grid_discretization$y)
+    z.base = seq(min(Bdbase_z),max(Bdbase_z), by=grid_discretization$z)
     base = expand.grid(x=x.base, y=y.base, z=z.base)
-    # SG pillar (in center of building)
-    ## ! should add relative coordinates of SG real
-    ## !
-    x.SGpillar = seq(min(Pillar_x),max(Pillar_x), by=grid_discretizaion$x)
-    y.SGpillar = seq(min(Pillar_y),max(Pillar_y), by=grid_discretizaion$y)
-    z.SGpillar = seq(min(Pillar_z),max(Pillar_z), by=grid_discretizaion$z)
+    # SG pillar
+    x.SGpillar = seq(min(Pillar_x),max(Pillar_x), by=grid_discretization$x)
+    y.SGpillar = seq(min(Pillar_y),max(Pillar_y), by=grid_discretization$y)
+    z.SGpillar = seq(min(Pillar_z),max(Pillar_z), by=grid_discretization$z)
     SGpillar = expand.grid(x=x.SGpillar, y=y.SGpillar, z=z.SGpillar)
     
     # combine all parts
     BdFoundation = rbind(walls.x, walls.y, base, SGpillar)
     
+    # round all x,y,z to same decimal places
+    # if not, joining might not be complete!
+    round_x = decimalplaces(grid_discretization$x)
+    round_y = decimalplaces(grid_discretization$y)
+    round_z = decimalplaces(grid_discretization$z)
+    BdFoundation$x = round(BdFoundation$x, round_x)
+    BdFoundation$y = round(BdFoundation$y, round_y)
+    BdFoundation$z = round(BdFoundation$z, round_z)
+
     return(BdFoundation)
 }
+
 

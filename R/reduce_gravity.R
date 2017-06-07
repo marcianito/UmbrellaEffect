@@ -24,10 +24,17 @@ reduce_gravity = function(
 ){
     # load gravity observations
     gravity_obs_data = read_data(gravity_obs, input_dir, dat_tsf = dat_tsf)
+    # subtract mean value 
+    gravity_obs_data$value = gravity_obs_data$value - mean(gravity_obs_data$value, na.rm = T)
     # change column name to enable join
     gravity_obs_data = gravity_obs_data %>%
         dplyr::mutate(obs = value) %>%
         dplyr::select(-value)
+    # subtract first value (first timestep)
+    # in order to create relative mass change response
+    # gravity_below$value = gravity_below$value - gravity_below$value[1]
+    # subtract mean value 
+    gravity_below$value = gravity_below$value - mean(gravity_below$value, na.rm = T)
 
     # reduce observed data by gravity reponse from below building
     gravity_reduced = dplyr::inner_join(gravity_obs_data, gravity_below) %>%

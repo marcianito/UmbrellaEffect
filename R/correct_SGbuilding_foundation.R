@@ -15,18 +15,84 @@
 
 correct_SGbuilding_foundation = function(
             gravity_gcomp3d,
-            building_foundation
+            Bdwall_ext_x,
+            Bdwall_ext_y,
+            Bdwall_ext_z,
+            Bdbase_x,
+            Bdbase_y,
+            Bdbase_z,
+            Pillar_x,
+            Pillar_y,
+            Pillar_z,
+            grid_discretization
 ){
-    ## removing SGPILLAR, WALLS, BASEMENT of building
-    # add column for use of filtering
-    building_foundation_house = cbind(building_foundation, house = T)
-    gcomp_grid3d = dplyr::left_join(gravity_gcomp3d, building_foundation_house) %>%
-    			dplyr::mutate(gcomp = ifelse(is.na(house) == T, gcomp, 0)) %>%
-    			dplyr::select(-house)
+    # gravity_gcomp3d = gravity_component_grid3d
+    # Bdwall_ext_x = Building_walls_x
+    # Bdwall_ext_y = Building_walls_y
+    # Bdwall_ext_z = Building_walls_z
+    # Bdbase_x = Building_x
+    # Bdbase_y = Building_y
+    # Bdbase_z = Building_baseplate_z
+    # Pillar_x = Building_SGpillar_x
+    # Pillar_y = Building_SGpillar_y
+    # Pillar_z = Building_SGpillar_z
+
+    # construct faces
+    faces = as.matrix(data.frame(
+            x = c(1, 7, 1, 6, 1, 4, 2, 8, 3, 8, 5, 8),
+            y = c(5, 3, 2, 5, 3, 2, 4, 6, 7, 4, 6, 7),
+            z = c(3, 5, 5, 2, 2, 3, 6, 4, 4, 7, 7, 6)
+    ))
+
+    # construct vertices
+    # for SG pillar
+    vert_SGpillar = construct_vertices(
+                        x_cords = Pillar_x,
+                        y_cords = Pillar_y,
+                        z_cords = Pillar_z
+    )
+    # for building baseplate
+    # round z values in case of UTM coordinates
+    round_z = decimalplaces(grid_discretization$z)
+    vert_Bdbase = construct_vertices(
+                        x_cords = Bdbase_x,
+                        y_cords = Bdbase_y,
+                        z_cords = round(Bdbase_z, round_z)
+    )
+    # for building walls 
+    vert_Bdwallxy1 = construct_vertices(
+                        x_cords = Bdbase_x,
+                        y_cords = c(min(Bdbase_y), min(Bdbase_y) + Bdwall_ext_y),
+                        z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))
+    )
+    vert_Bdwallxy2 = construct_vertices(
+                        x_cords = Bdbase_x,
+                        y_cords = c(max(Bdbase_y), max(Bdbase_y) - Bdwall_ext_y),
+                        z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))
+    )
+    vert_Bdwallyx1 = construct_vertices(
+                        x_cords = c(min(Bdbase_x), min(Bdbase_x) + Bdwall_ext_x),
+                        y_cords = Bdbase_y,
+                        z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))
+    )
+    vert_Bdwallyx2 = construct_vertices(
+                        x_cords = c(max(Bdbase_x), max(Bdbase_x) - Bdwall_ext_x),
+                        y_cords = Bdbase_y,
+                        z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))
+    )
     
-    # remove duplicated entries
-    dups = which(duplicated(gcomp_grid3d[,1:3]) == T)
-    gcomp_grid3d = gcomp_grid3d[-dups,]
+    # check and remove if points of gravity component grid
+    # lay in one of the above constructed rectangulars
+    # = SG pillar, building baseplate and walls
+    gcomp_grid3d = gravity_gcomp3d %>%
+        dplyr::mutate(SGpillar = pip3d(vert_SGpillar, faces, as.matrix(gravity_gcomp3d[,1:3]))) %>%
+        dplyr::mutate(Bd_baseplate = pip3d(vert_Bdbase, faces, as.matrix(gravity_gcomp3d[,1:3]))) %>%
+        dplyr::mutate(Bd_wallsxy1 = pip3d(vert_Bdwallxy1, faces, as.matrix(gravity_gcomp3d[,1:3]))) %>%
+        dplyr::mutate(Bd_wallsxy2 = pip3d(vert_Bdwallxy2, faces, as.matrix(gravity_gcomp3d[,1:3]))) %>%
+        dplyr::mutate(Bd_wallsyx1 = pip3d(vert_Bdwallyx1, faces, as.matrix(gravity_gcomp3d[,1:3]))) %>%
+        dplyr::mutate(Bd_wallsyx2 = pip3d(vert_Bdwallyx2, faces, as.matrix(gravity_gcomp3d[,1:3]))) %>%
+        dplyr::mutate(gcomp = ifelse(SGpillar >= 0 | Bd_baseplate >= 0 | Bd_wallsxy1 >= 0 | Bd_wallsxy2 >= 0 | Bd_wallsyx1 >= 0 | Bd_wallsyx2 >= 0, 0, gcomp)) %>%
+        dplyr::select(-SGpillar, -Bd_baseplate, -Bd_wallsxy1, -Bd_wallsxy2, -Bd_wallsyx1, -Bd_wallsyx2)
 
     return(gcomp_grid3d)
 }

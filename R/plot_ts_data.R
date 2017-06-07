@@ -29,17 +29,30 @@ plot_ts_data = function(
             dat_tsf = 7,
             ...
 ){
-    gravity_obs = gravityObservations_input_file
-    gravity_outside = gravity_response_outside_building
-    gravity_below = gravity_response_below_building
-    gravity_reduced = gravity_data_reduced
-    input_dir = dir_input
+    # gravity_obs = gravityObservations_input_file
+    # gravity_outside = gravity_response_outside_building
+    # gravity_below = gravity_response_below_building
+    # gravity_reduced = gravity_data_reduced
+    # input_dir = dir_input
+
+    # subtract starting value (of first timestep)
+    # subtract starting value (of first timestep)
+    # this is done to create relative mass change responses and not absolut
+    # gravity reponse outside & below
+    # gravity_outside$value = gravity_outside$value - gravity_outside$value[1]
+    # gravity_below$value = gravity_below$value - gravity_below$value[1]
+    # subtract mean value 
+    gravity_outside$value = gravity_outside$value - mean(gravity_outside$value, na.rm = T)
+    gravity_below$value = gravity_below$value - mean(gravity_below$value, na.rm = T)
+
     ## read in routine for gravity obs data
     # same as in function "reduce_gravity"
     # this time resulting in columns $datetime, $value
     if(!is.na(gravity_obs)){
         # read data
         gravity_obs_data = read_data(gravity_obs, input_dir, dat_tsf = dat_tsf)
+        # subtract mean value 
+        gravity_obs_data$value = gravity_obs_data$value - mean(gravity_obs_data$value, na.rm = T)
 
         # combine datasets
         gravity_data_all = rbind(
