@@ -24,46 +24,11 @@ SoilMoisture_grid3d = function(
             input_dir,
             ... # should be able to pass stuff like sep="", etc.
 ){
+    # soilMoisture_input = soilMoisture_input_file
+    # input_dir = dir_input
+
     # read input data
     SMdata_in = read_data(soilMoisture_input, input_dir)
-
-    ## probably the best to average all available 1 d
-    # data per depth layer and then
-    # distribute (join) to existing 3d grid !?
-    # how to process when someone has 3d data !?
-    # how if someone has 2d model data?
-
-    # round data to make use join is performed correctly !
-    # round_z = decimalplaces(grid_discretization$z)
-    # SMdata_in$Depth = round(SMdata_in$Depth, round_z)
-
-    # 1) inter / extrapolate SM input data to grid_discretization
-    
-    # 1d
-    # grid_new = data.frame(
-    #                       layer = unique(grid_domain$layer),
-    #                       Depth = unique(grid_domain$Depth)
-    # )
-    # testdata = data.frame(Depth = rep(round(c(0,0.5,1,1.5,2,2.5,3),1),2),
-    #                       value = rep(c(.25,.28,.3,.27,.25,.2,.15),2),
-    #                       datetime = c(rep(1,7),rep(2,7)))
-    # # create results data.frame
-    # SMdata = data.frame(
-    #                     datetime = rep(unique(testdata$datetime), each = length(unique(grid_domain$Depth))),
-    #                     layer = rep(unique(grid_domain$layer), length(unique(testdata$datetime))),
-    #                     value = NA
-    # )
-    # # run for every timestep
-    # for(ts in unique(testdata$datetime)){
-    # # subset SM data
-    # SM_sub = dplyr::filter(testdata, datetime == ts) %>%
-    #          dplyr::select(-datetime)
-    # # interpolate data to new resolution
-    # SM_int_tmp = approx(SM_sub, xout = unique(grid_domain$Depth))
-    # # SM_int_tmp = approx(SM_sub, xout = grid_new$Depth)
-    # # combine data
-    # SMdata$value[which(SMdata$datetime == ts)] = SM_int_tmp$y
-    # }
 
     # create results data.frame
     SMdata = data.frame(

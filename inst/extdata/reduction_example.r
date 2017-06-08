@@ -70,9 +70,9 @@ plot_data = TRUE
 ## Gravimeter location
 # in [m]
 # relativ, local coordinate sytem
-# SG_x = 3
-# SG_y = 4
-# SG_Z = 0
+SG_x = 3
+SG_y = 3
+SG_Z = 0
 # UTM coordinate system
 SG_x = 4564041.87 
 SG_y = 5445662.88 
@@ -82,8 +82,8 @@ SG_SensorHeight = 1.5
 ## Model domain
 # in [m]
 # local grid or UTM, depending on the coordinates of the SG !
-# Building_x = c(0, 6) # min, max
-# Building_y = c(0, 6) # min, max
+Building_x = c(0, 6) # min, max
+Building_y = c(0, 6) # min, max
 # grid3d_depth = c(-3, 0) # min, max
 # UTM
 Building_x = c(SG_x - 3, SG_x + 3) # min, max
@@ -102,10 +102,10 @@ Building_walls_x = .5 # extension
 Building_walls_y = .5 # extension 
 Building_walls_z = 1.5 # extension
 # local grid
-# Building_baseplate_z = c(-.5, 0) # min, max
-# Building_SGpillar_x = c(2, 4) # min, max
-# Building_SGpillar_y = c(3, 5) # min, max
-# Building_SGpillar_z = c(-1, 0) # min, max
+Building_baseplate_z = c(-.5, 0) # min, max
+Building_SGpillar_x = c(2, 4) # min, max
+Building_SGpillar_y = c(2, 4) # min, max
+Building_SGpillar_z = c(-1, 0) # min, max
 # UTM
 Building_baseplate_z = c(SG_Z - .5, SG_Z) # min, max
 Building_SGpillar_x = c(SG_x - 1, SG_x + 1) # min, max
@@ -145,7 +145,7 @@ data_tsf = 13
 # file name including its path
 # should be absolute
 # if left empty, a flat topographie will be assumed
-# DEM_input_file = ""
+DEM_input_file = ""
 DEM_input_file = "WE_UP_TO_300m_05m.asc"
 
 ## Soil moisture data time series (observed or modelled)
@@ -184,6 +184,7 @@ surface_grid = surface_grid(
             DEM = DEM_input_file,
             grid_domain_x = Building_x,
             grid_domain_y = Building_y,
+            grid_discretization = grid3d_discr,
             input_dir = dir_input,
             output_dir = dir_output
             # , sep = "a", etc.
@@ -195,7 +196,6 @@ message("done.")
 #########################################
 message("Generate 3d gravity component grid..")
 
-## create 3d grid of gravity components
 gravity_component_grid3d = gravity_comp_grid(
             surface = surface_grid,
             SG_coordinates = SGloc,
@@ -223,13 +223,28 @@ gravity_component_grid3d = correct_SGbuilding_foundation(
             grid_discretization = grid3d_discr
 )
 
-# rel.coord system: gcomp == 0 are 627
-# UTM.coord system: gcomp == 0 are 429
+# rel.coord system: gcomp == 0 are 627, sum = 202.9727
+# UTM.coord system: gcomp == 0 are 545, sum = 251.3699
+gcomp_rel = gravity_component_grid3d
+gcomp_utm = gravity_component_grid3d
 length(which(gravity_component_grid3d$gcomp == 0))
+sum(gravity_component_grid3d$gcomp)
+# lookt at upper boundary
+gcomp_surface = dplyr::group_by(gravity_component_grid3d, Depth) %>%
+    dplyr::summarize(nZeros = length(which(gcomp == 0)),
+                     nTotal = length(gcomp))
+gcomp_surface_UTM
+
+gcomp_rel_mod = gcomp_rel
+colnames(gcomp_rel_mod) = c("xrel","yrel","zrel","Depth_rel","layer_rel","gcomp_rel")
+gcomps = cbind(gcomp_utm, gcomp_rel_mod) %>%
+    dplyr::filter(gcomp_rel == 0) %>%
+    dplyr::filter(gcomp != 0)
+
 # poblematic:
 max(gravity_component_grid3d$z) - max(Building_baseplate_z)
-min(gravity_component_grid3d$x) - min(Building_x)
-min(gravity_component_grid3d$y) - min(Building_y)
+min(gravity_component_grid3d$x) < min(Building_x)
+min(gravity_component_grid3d$y) < min(Building_y)
 # rounded: not solving problem
 round(min(gravity_component_grid3d$x),1) - round(min(Building_x),1)
 round(min(gravity_component_grid3d$y),1) - round(min(Building_y),1)
@@ -242,7 +257,8 @@ if(plot_data){
   plot_gcomp_grid(
                   grid_input = gravity_component_grid3d,
                   yloc = SG_y,
-                  output_dir = dir_output
+                  output_dir = dir_output,
+                  grid_discretization = grid3d_discr
 )
 }
 
@@ -404,6 +420,7 @@ and stored as well in the output directory.")
 #                           datetime = sm_ts[2:745],
 #                           datatime = gg_ts)
 # sm_mod = left_join(change_dates, sm)
+## !! check if z has NEGATIVE COORDINATES DOWNWARDS !!
 # SoilMoisture_input_1d = data.frame(
 #                                    datetime = sm_mod$datatime,
 #                                    z = sm_mod$z,

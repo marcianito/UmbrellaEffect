@@ -4,7 +4,7 @@
 \alias{reduce_gravity}
 \title{Reduce observed gravity data}
 \usage{
-reduce_gravity(gravity_obs, gravity_below, input_dir, ...)
+reduce_gravity(gravity_obs, gravity_below, input_dir, dat_tsf = 7, ...)
 }
 \arguments{
 \item{gravity_obs}{Vector, containing the filename of the observed gravity data, which is to be reduced.}

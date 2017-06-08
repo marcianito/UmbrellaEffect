@@ -4,7 +4,7 @@
 \alias{read_tsf}
 \title{Read .tsf files}
 \usage{
-read_tsf(data_in, data_dir, dat_col = 7, ...)
+read_tsf(data_in, data_dir, dat_tsf, ...)
 }
 \arguments{
 \item{data_in}{Vector, containing the filename of the data to read.

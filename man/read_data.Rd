@@ -4,7 +4,8 @@
 \alias{read_data}
 \title{Read input data files}
 \usage{
-read_data(data_in, data_dir, spat_col = c(NA, NA, 2), dat_col = 3, ...)
+read_data(data_in, data_dir, spat_col = c(NA, NA, 2), dat_col = 3,
+  dat_tsf = 7, ...)
 }
 \arguments{
 \item{data_in}{Vector, containing the filename of the data to read.}

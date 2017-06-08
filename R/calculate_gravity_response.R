@@ -13,7 +13,14 @@
 #' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing 
 
-calculate_gravity_response = function(gcomp_grid, mass_input){
+calculate_gravity_response = function(
+            gcomp_grid,
+            mass_input
+){
+    # gcomp_grid = gravity_component_grid3d
+    # mass_input = SMgrid3d_outside
+    # exclude z-columns of soil moisture dataset for smoother joining
+    mass_input = dplyr::select(mass_input, -z)
     # join datasets (by x,y,z) and multiply
     # gravity component with soil moisture content of each cell
     gsignals = dplyr::left_join(gcomp_grid, mass_input, by=c("x","y","Depth")) %>%

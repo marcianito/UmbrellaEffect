@@ -36,6 +36,7 @@ correct_SGbuilding_foundation = function(
     # Pillar_x = Building_SGpillar_x
     # Pillar_y = Building_SGpillar_y
     # Pillar_z = Building_SGpillar_z
+    # grid_discretization = grid3d_discr
 
     # construct faces
     faces = as.matrix(data.frame(
@@ -57,7 +58,7 @@ correct_SGbuilding_foundation = function(
     vert_Bdbase = construct_vertices(
                         x_cords = Bdbase_x,
                         y_cords = Bdbase_y,
-                        z_cords = round(Bdbase_z, round_z)
+                        z_cords = c(min(Bdbase_z), max(round(Bdbase_z, round_z)) + grid_discretization$z)
     )
     # for building walls 
     vert_Bdwallxy1 = construct_vertices(

@@ -5,7 +5,8 @@
 \title{Plot multiply time series with one same basis}
 \usage{
 plot_ts_data(gravity_obs = NA, gravity_outside, gravity_below,
-  gravity_reduced = NA, input_dir = dir_input, output_dir = dir_output)
+  gravity_reduced = NA, input_dir = dir_input, output_dir = dir_output,
+  dat_tsf = 7, ...)
 }
 \arguments{
 \item{gravity_obs}{Character string with the filename of the gravity observation data to be used.}

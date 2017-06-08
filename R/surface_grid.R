@@ -20,6 +20,7 @@ surface_grid = function(
             DEM,
             grid_domain_x,
             grid_domain_y,
+            grid_discretization,
             input_dir,
             output_dir,
             ...
@@ -41,19 +42,36 @@ surface_grid = function(
         # read DEM as raster
         dem_raster = raster(paste0(input_dir,DEM))
         
-        # create local grid domain (extension),
-        # based on building coordinates
-        grid_domain = data.frame(x=c(min(grid_domain_x) ,min(grid_domain_x), max(grid_domain_x), max(grid_domain_x)),
-                                 y=c(min(grid_domain_y), max(grid_domain_y), max(grid_domain_y), min(grid_domain_y))
+        # the older method was to crop the grid based on a new extent
+        # this is now deprecated, due to problems with boundary coordinate extent and matching
+        # new method: see below
+        # 
+        # # create local grid domain (extension),
+        # # based on building coordinates
+        # grid_domain = data.frame(x=c(min(grid_domain_x) ,min(grid_domain_x), max(grid_domain_x), max(grid_domain_x)),
+        #                          y=c(min(grid_domain_y), max(grid_domain_y), max(grid_domain_y), min(grid_domain_y))
+        #                          )
+        # extent_grid_domain = extent(grid_domain)
+        # # limit DEM to extent of SG building
+        # # dem_grid_domain = crop(dem_raster, extent_grid_domain)
+        # # DEM had to be snapped, in order to get the correct number of elements (its extent)
+        # # as a non-DEM surface grid on the basis of Building_x,y
+        # dem_grid_domain = crop(dem_raster, extent_grid_domain, snap= "out")
+        # writeRaster(dem_grid_domain, filename = paste0(output_dir, "dem_grid"), format="ascii", NAflag=-9999, overwrite=T)
+
+        # create raster of new grid extent
+        grid_domain_new = raster(xmn = min(grid_domain_x),
+                                 xmx = max(grid_domain_x),
+                                 ymn = min(grid_domain_y),
+                                 ymx = max(grid_domain_y),
+                                 nrows = length(seq(min(grid_domain_x),max(grid_domain_x),by=grid_discretization$x)),
+                                 ncols = length(seq(min(grid_domain_y),max(grid_domain_y),by=grid_discretization$y))
+                                 # resolution = .5
                                  )
-        extent_grid_domain = extent(grid_domain)
-        # limit DEM to extent of SG building
-        # dem_grid_domain = crop(dem_raster, extent_grid_domain)
-        # DEM had to be snapped, in order to get the correct number of elements (its extent)
-        # as a non-DEM surface grid on the basis of Building_x,y
-        dem_grid_domain = crop(dem_raster, extent_grid_domain, snap= "out")
+
+        dem_grid_domain = resample(dem_raster, grid_domain_new)
         writeRaster(dem_grid_domain, filename = paste0(output_dir, "dem_grid"), format="ascii", NAflag=-9999, overwrite=T)
-        
+
         # reload grid for verification
         # in order to create the surface grid
         ## ! here has to be found a more straight forward way,

@@ -4,7 +4,7 @@
 \alias{read_rData}
 \title{Read .rData files}
 \usage{
-read_rData(data_in, data_dir, spat_col = c(NA, NA, 2), dat_col = 3, ...)
+read_rData(data_in, data_dir, spat_col, dat_col, ...)
 }
 \arguments{
 \item{data_in}{Vector, containing the filename of the data to read.}

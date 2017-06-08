@@ -5,7 +5,7 @@
 \title{Constructs a grid of the SG buidling foundation}
 \usage{
 building_foundation(Bdwall_ext_x, Bdwall_ext_y, Bdwall_ext_z, Bdbase_x,
-  Bdbase_y, Bdbase_z, Pillar_x, Pillar_y, Pillar_z, grid_discretizaion)
+  Bdbase_y, Bdbase_z, Pillar_x, Pillar_y, Pillar_z, grid_discretization)
 }
 \arguments{
 \item{Bdwall_ext_x, y, z}{Numeric, giving the extent of the wall in x,y,z directions.}

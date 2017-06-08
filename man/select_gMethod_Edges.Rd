@@ -2,29 +2,48 @@
 % Please edit documentation in R/gravity_comp_grid.R
 \name{select_gMethod_Edges}
 \alias{select_gMethod_Edges}
-\title{choose method for computing gravity component for a cell of a grid}
+\title{Choose method for computing gravity component for a cell of a grid}
 \usage{
 select_gMethod_Edges(xloc, yloc, zloc, gloc, gdiscr, edge, layer, layermax,
-  r_inner, r_outer, gama, rho, w)
+  r_inner, r_outer, gamma, rho, w)
 }
 \arguments{
-\item{gcompfiles}{vector containing the names (complete paths or relative) of the gravity component files to be used for calculations. These files are generated using gcomp().}
+\item{xloc}{t}
 
-\item{theta}{data.frame with column structure $time, $timestep, $theta (value), $layer}
+\item{yloc}{t}
 
-\item{output}{Defines the output to be a singel value, layer or grid (default is value)
+\item{zloc}{t}
+
+\item{gloc}{t}
+
+\item{gdiscr}{t}
+
+\item{edge}{t}
+
+\item{layer}{t}
+
+\item{layermax}{t}
+
+\item{r_inner}{t}
+
+\item{r_outer}{t}
+
+\item{gamma}{t}
+
+\item{rho}{t}
+
+\item{w}{t
 ...}
 }
 \description{
-After calculating the gravity components (gcomp()), this function can be used to get real values using soil moisture data (theta). The output of the gravity signal is possible in different dimensions.
+test
 }
 \details{
-Usually one needs relative gravity signals, therefore the inputed theta timeseries should be acutally delta theta vaules per timestep. The
-other option is calculating the differences in values per timestep of the output of this function.
+test
 }
 \examples{
 missing 
 }
 \references{
-Marvin Reich (2014), mreich@gfz-potsdam.de
+Marvin Reich (2017), mreich@posteo.de
 }

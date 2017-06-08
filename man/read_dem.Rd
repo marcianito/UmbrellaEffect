@@ -23,5 +23,5 @@ Outputs files: data.DEM, info.DEM (as data.frames).
 missing
 }
 \references{
-Marvin Reich (2014), mreich@gfz-potsdam.de
+Marvin Reich (2017), mreich@posteo.de
 }

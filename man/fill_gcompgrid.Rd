@@ -23,5 +23,5 @@ missing
 example MISSING
 }
 \references{
-Marvin Reich (2014), mreich@gfz-potsdam.de
+Marvin Reich (2017), mreich@posteo.de
 }

@@ -4,12 +4,14 @@
 \alias{correct_SGbuilding_foundation}
 \title{Correct the gravity component grid for the SG building foundation}
 \usage{
-correct_SGbuilding_foundation(gravity_gcomp3d, building_foundation)
+correct_SGbuilding_foundation(gravity_gcomp3d, Bdwall_ext_x, Bdwall_ext_y,
+  Bdwall_ext_z, Bdbase_x, Bdbase_y, Bdbase_z, Pillar_x, Pillar_y, Pillar_z,
+  grid_discretization)
 }
 \arguments{
-\item{building_foundation}{Data.frame, 3 columns: spatial information (x,y,z) about the stucture of the foundation of the SG building.}
-
 \item{gravity_gcomp}{Data.frame, 4 columns: spatial information (x,y,z) and corresponding gravity component (value).}
+
+\item{building_foundation}{Data.frame, 3 columns: spatial information (x,y,z) about the stucture of the foundation of the SG building.}
 }
 \value{
 Returns a data.frame, consisting of 4 columns: 3 dimensions in space (x,y,Z) and value, holding the gravity component data.

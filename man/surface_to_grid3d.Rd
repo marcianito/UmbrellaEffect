@@ -4,10 +4,14 @@
 \alias{surface_to_grid3d}
 \title{Interpolate grid(df) to 3D grid}
 \usage{
-surface_to_grid3d(surface_grid, grid_discr, depth_split)
+surface_to_grid3d(surface_grid, grid_discr, depth_split, Bd_x = Building_x,
+  Bd_y = Building_y)
 }
 \arguments{
 \item{grid_discr}{vector of discretization of new grid in (x,y,z).}
+
+\item{Bd_x, y}{Vector, containing min and max coordinates of buildings x and y coordinates.
+They only need to be supplied, if no surface grid is given as input.}
 
 \item{grid_cords}{coordinates of the original hydrus mesh.}
 
@@ -23,5 +27,5 @@ missing
 missing
 }
 \references{
-Marvin Reich (2016), mreich@gfz-potsdam.de
+Marvin Reich (2017), mreich@posteo.de
 }

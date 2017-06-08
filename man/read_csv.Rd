@@ -4,7 +4,7 @@
 \alias{read_csv}
 \title{Read .csv files}
 \usage{
-read_csv(data_in, data_dir, spat_col = c(NA, NA, 2), dat_col = 3, ...)
+read_csv(data_in, data_dir, spat_col, dat_col, ...)
 }
 \arguments{
 \item{data_in}{Vector, containing the filename of the data to read.}

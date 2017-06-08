@@ -4,7 +4,8 @@
 \alias{surface_grid}
 \title{Surface grid}
 \usage{
-surface_grid(DEM, grid_domain_x, grid_domain_y, input_dir, output_dir, ...)
+surface_grid(DEM, grid_domain_x, grid_domain_y, grid_discretization, input_dir,
+  output_dir, ...)
 }
 \arguments{
 \item{DEM}{Character string, containing the name of the DEM-file to use.
