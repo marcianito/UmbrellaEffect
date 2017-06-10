@@ -27,6 +27,7 @@ For bug fixes, comments or further development please contact: mreich@posteo.de.
 `devtools::install_github("marcianito/UmbrellaEffect")`
 
 4. load package
+
 `library(UmbrellaEffect)
 
 ## Dependencies
@@ -34,6 +35,10 @@ For bug fixes, comments or further development please contact: mreich@posteo.de.
 ### Computationally
 * r-base version 3.3.1
 * following R-packages: devtools, dplyr, ggplot2, gstat, ptinpoly, raster, reshape2, viridis, xts, zoo
+* system libraries for rgdal and devtools
+
+in debian install using: 
+`apt-get update && apt-get install libgdal-dev libproj-dev libssl-dev`
 
 ### Data-wise
 It is necessary to have modeled or measured soil moisture data from directly next to the SG building.
@@ -54,7 +59,7 @@ All changes should be done in a new file following (or a copy of) the reduction_
 
 (Step 2 is only explanatory for what the script does; no modifications necessary.)
 
-1. Setup: preferences, data and configs for preduction procedure
+1. Setup: 
 	* _Directory and configs (input / output, file extentions, enable plotting)_
 	* _Gravimeter coordinates (x, y, z + height of sensor)_
 	* _Model domain (x and y extensions)_
