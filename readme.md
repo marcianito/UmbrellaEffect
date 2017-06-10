@@ -22,13 +22,11 @@ For bug fixes, comments or further development please contact: mreich@posteo.de.
 ## Installation
 
 1. Start R
-2. Install package via devtools
-
+2. Install package via devtools: 
 `devtools::install_github("marcianito/UmbrellaEffect")`
 
-4. load package
-
-`library(UmbrellaEffect)
+4. load package: 
+`library(UmbrellaEffect)`
 
 ## Dependencies
 
