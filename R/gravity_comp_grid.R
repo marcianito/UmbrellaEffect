@@ -6,6 +6,7 @@
 #' @param SG_coordinates this
 #' @param grid_discretization this
 #' @param grid_depth this
+#' @param range_coords_x,y this
 #' 
 #' @return Returned is a data.frame with 4 columns.
 #' 3 for coordinates in space (x,y,z) and one with
@@ -19,13 +20,24 @@ gravity_comp_grid = function(
             surface,
             SG_coordinates,
             grid_discretization,
-            grid_depth
+            grid_depth,
+            range_coords_x,
+            range_coords_y
 ){
+    # surface = surface_grid
+    # SG_coordinates = SGloc
+    # grid_discretization = grid3d_discr
+    # grid_depth = grid3d_depth
+    # range_coords_x = sprinklingArea_x
+    # range_coords_y = sprinklingArea_y
+
     # generate 3d grid
     grid3d = surface_to_grid3d(
             surface_grid = surface,
             grid_discr = grid_discretization,
-            depth_split = grid_depth
+            depth_split = grid_depth,
+            Bd_x = range_coords_x,
+            Bd_y = range_coords_y
     )
     # generate gravity component grid
     gcomp_grid = fill_gcompgrid(

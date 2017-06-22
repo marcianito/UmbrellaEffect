@@ -45,6 +45,11 @@ correct_SGbuilding_foundation = function(
             z = c(3, 5, 5, 2, 2, 3, 6, 4, 4, 7, 7, 6)
     ))
 
+    # round z values in case of UTM coordinates
+    round_x = decimalplaces(grid_discretization$y)
+    round_y = decimalplaces(grid_discretization$x)
+    round_z = decimalplaces(grid_discretization$z)
+
     # construct vertices
     # for SG pillar
     vert_SGpillar = construct_vertices(
@@ -53,8 +58,6 @@ correct_SGbuilding_foundation = function(
                         z_cords = Pillar_z
     )
     # for building baseplate
-    # round z values in case of UTM coordinates
-    round_z = decimalplaces(grid_discretization$z)
     vert_Bdbase = construct_vertices(
                         x_cords = Bdbase_x,
                         y_cords = Bdbase_y,
@@ -81,6 +84,30 @@ correct_SGbuilding_foundation = function(
                         y_cords = Bdbase_y,
                         z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))
     )
+
+    # try out to play with ENLARGING area of vertices
+    # not working propery !
+    # for building walls 
+    # vert_Bdwallxy1 = construct_vertices(
+    #                     x_cords = Bdbase_x + c(- .9 * grid_discretization$x, .9 * grid_discretization$x),
+    #                     y_cords = c(min(Bdbase_y), min(Bdbase_y) + Bdwall_ext_y) + c(- .9 * grid_discretization$y, .9 * grid_discretization$y),
+    #                     z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z)) + c(- .9 * grid_discretization$z, .9 * grid_discretization$z)
+    # )
+    # vert_Bdwallxy2 = construct_vertices(
+    #                     x_cords = Bdbase_x+ c(- .9 * grid_discretization$x, .9 * grid_discretization$x),
+    #                     y_cords = c(max(Bdbase_y), max(Bdbase_y) - Bdwall_ext_y)+ c(- .9 * grid_discretization$y, .9 * grid_discretization$y),
+    #                     z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))+ c(- .9 * grid_discretization$z, .9 * grid_discretization$z)
+    # )
+    # vert_Bdwallyx1 = construct_vertices(
+    #                     x_cords = c(min(Bdbase_x), min(Bdbase_x) + Bdwall_ext_x)+ c(- .9 * grid_discretization$x, .9 * grid_discretization$x),
+    #                     y_cords = Bdbase_y+ c(- .9 * grid_discretization$y, .9 * grid_discretization$y),
+    #                     z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))+ c(- .9 * grid_discretization$z, .9 * grid_discretization$z)
+    # )
+    # vert_Bdwallyx2 = construct_vertices(
+    #                     x_cords = c(max(Bdbase_x), max(Bdbase_x) - Bdwall_ext_x)+ c(- .9 * grid_discretization$x, .9 * grid_discretization$x),
+    #                     y_cords = Bdbase_y+ c(- .9 * grid_discretization$y, .9 * grid_discretization$y),
+    #                     z_cords = c(min(Bdbase_z) - Bdwall_ext_z,min(Bdbase_z))+ c(- .9 * grid_discretization$z, .9 * grid_discretization$z)
+    # )
     
     # check and remove if points of gravity component grid
     # lay in one of the above constructed rectangulars

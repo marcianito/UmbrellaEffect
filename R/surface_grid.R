@@ -27,7 +27,10 @@ surface_grid = function(
 ){
     # grid_domain_x = Building_x
     # grid_domain_y = Building_y
+    # grid_domain_x = sprinklingArea_x
+    # grid_domain_y = sprinklingArea_y
     # DEM = DEM_input_file
+    # grid_discretization = grid3d_discr
     # input_dir = dir_input
 
     ## check if DEM is non-empty, if not return NULL

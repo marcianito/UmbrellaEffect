@@ -15,11 +15,11 @@ surface_to_grid3d = function(
             surface_grid,
             grid_discr,
             depth_split,
-            Bd_x = Building_x,
-            Bd_y = Building_y
+            Bd_x,
+            Bd_y
 ){
-    grid_discr = grid3d_discr
-    depth_split = grid3d_depth
+    # grid_discr = grid3d_discr
+    # depth_split = grid3d_depth
 
     # decide if a surface grid is supplied
     if(!is.null(surface_grid)){
@@ -28,8 +28,8 @@ surface_to_grid3d = function(
                                y=rep(surface_grid$y,length(grid.z)),
                                z=rep(grid.z, each=length(surface_grid[,1])))
     }else{
-    	grid.x = seq(min(Building_x), max(Building_x), by=grid_discr$x)
-    	grid.y = seq(min(Building_y), max(Building_y), by=grid_discr$y)
+    	grid.x = seq(min(Bd_x), max(Bd_x), by=grid_discr$x)
+    	grid.y = seq(min(Bd_y), max(Bd_y), by=grid_discr$y)
     	grid.z = rev(seq(min(depth_split), max(depth_split), by=grid_discr$z))
     	grid.xyz = expand.grid(x=grid.x, y=grid.y, z=grid.z)
         surface_grid = expand.grid(x=grid.x, y=grid.y, z = max(depth_split))
