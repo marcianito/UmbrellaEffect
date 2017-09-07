@@ -47,6 +47,8 @@ library(ggplot2)
 library(viridis)
 library(gstat)
 library(ptinpoly)
+#
+library(plot3D)
 message("done.")
 ####################
 
@@ -73,6 +75,7 @@ plot_data = TRUE
 SG_x = 3
 SG_y = 3
 SG_Z = 0
+SG_SensorHeight = 1.5 
 # UTM coordinate system
 SG_x = 4564041.87 
 SG_y = 5445662.88 
@@ -98,8 +101,8 @@ grid3d_depth = c(-3, 0) # min, max
 ## Parameters for foundation of building
 # these include baseplate, walls, SG pillar(s)
 # please use same units as in DEM and model domain
-Building_walls_x = .5 # extension
-Building_walls_y = .5 # extension 
+Building_walls_x = .6 # extension
+Building_walls_y = .6 # extension 
 Building_walls_z = 1.5 # extension
 # local grid
 Building_baseplate_z = c(-.5, 0) # min, max
@@ -122,6 +125,13 @@ SG_position = "Center"
 # "Anisotropy sandy loam", "", "" ; for anisotropy of hydraulic conductivity scenarios
 # "Climate AI=0.35", "Climate AI=0.575", "Climate AI=1.0", "Climate AI=2.0" ; for climate scenarios
 Hydro_condition = "Soil type sandy loam"
+
+## Vertical extent of reduction
+# indicates the vertical extent until which a reduction factor should be calculated and applied
+# this is valid for both Hydroglical site condition & SG position reduction as also building dimension reduction factors
+# units in [m]
+# maximum value: 5
+VerticalExt_reduction = 5
 
 ## Input files
 ## general settings
@@ -200,7 +210,9 @@ gravity_component_grid3d = gravity_comp_grid(
             surface = surface_grid,
             SG_coordinates = SGloc,
             grid_discretization = grid3d_discr,
-            grid_depth = grid3d_depth
+            grid_depth = grid3d_depth,
+            range_coords_x = Building_x,
+            range_coords_y = Building_y
 )
 
 message("done.")
@@ -223,34 +235,39 @@ gravity_component_grid3d = correct_SGbuilding_foundation(
             grid_discretization = grid3d_discr
 )
 
-# rel.coord system: gcomp == 0 are 627, sum = 202.9727
-# UTM.coord system: gcomp == 0 are 545, sum = 251.3699
-gcomp_rel = gravity_component_grid3d
-gcomp_utm = gravity_component_grid3d
-length(which(gravity_component_grid3d$gcomp == 0))
-sum(gravity_component_grid3d$gcomp)
-# lookt at upper boundary
-gcomp_surface = dplyr::group_by(gravity_component_grid3d, Depth) %>%
-    dplyr::summarize(nZeros = length(which(gcomp == 0)),
-                     nTotal = length(gcomp))
-gcomp_surface_UTM
-
-gcomp_rel_mod = gcomp_rel
-colnames(gcomp_rel_mod) = c("xrel","yrel","zrel","Depth_rel","layer_rel","gcomp_rel")
-gcomps = cbind(gcomp_utm, gcomp_rel_mod) %>%
-    dplyr::filter(gcomp_rel == 0) %>%
-    dplyr::filter(gcomp != 0)
-
-# poblematic:
-max(gravity_component_grid3d$z) - max(Building_baseplate_z)
-min(gravity_component_grid3d$x) < min(Building_x)
-min(gravity_component_grid3d$y) < min(Building_y)
-# rounded: not solving problem
-round(min(gravity_component_grid3d$x),1) - round(min(Building_x),1)
-round(min(gravity_component_grid3d$y),1) - round(min(Building_y),1)
-# not problematic:
-max(gravity_component_grid3d$y) > max(Building_y)
-max(gravity_component_grid3d$x) > max(Building_x)
+# ## still to debug / solve
+# # rel.coord system: gcomp == 0 are 627, sum = 202.9727
+# # UTM.coord system: gcomp == 0 are 545, sum = 251.3699
+# gcomp_rel = gravity_component_grid3d
+# gcomp_utm = gravity_component_grid3d
+# gcomp_utm2 = gravity_component_grid3d
+# # plot in 3d slices
+# slice3D(x = gcomp_rel$x, y = gcomp_rel$y,z = gcomp_rel$z,colvar = as.array(dplyr::select(gcomp_rel, x,y,z)))
+# 
+# length(which(gravity_component_grid3d$gcomp == 0))
+# sum(gravity_component_grid3d$gcomp)
+# # lookt at upper boundary
+# gcomp_surface = dplyr::group_by(gravity_component_grid3d, Depth) %>%
+#     dplyr::summarize(nZeros = length(which(gcomp == 0)),
+#                      nTotal = length(gcomp))
+# gcomp_surface_UTM
+# 
+# gcomp_rel_mod = gcomp_rel
+# colnames(gcomp_rel_mod) = c("xrel","yrel","zrel","Depth_rel","layer_rel","gcomp_rel")
+# gcomps = cbind(gcomp_utm2, gcomp_rel_mod) %>%
+#     dplyr::filter(gcomp_rel == 0) %>%
+#     dplyr::filter(gcomp != 0)
+# 
+# # poblematic:
+# max(gravity_component_grid3d$z) - max(Building_baseplate_z)
+# min(gravity_component_grid3d$x) < min(Building_x)
+# min(gravity_component_grid3d$y) < min(Building_y)
+# # rounded: not solving problem
+# round(min(gravity_component_grid3d$x),1) - round(min(Building_x),1)
+# round(min(gravity_component_grid3d$y),1) - round(min(Building_y),1)
+# # not problematic:
+# max(gravity_component_grid3d$y) > max(Building_y)
+# max(gravity_component_grid3d$x) > max(Building_x)
 
 if(plot_data){
   message("Plotting transect of gravity component grid and saving plot to output directory..")
@@ -307,7 +324,9 @@ message("Convert gravity response (outside) to gravity response below SG buildin
 reduction_factor_hydSen_SGloc = reduction_hydScen_SGloc(
             Scenario == Hydro_condition,
             SGlocation == SG_position,
-            MeanSoilMoisture = SoilMoisture_mean_ts)
+            VertLimit = VerticalExt_reduction,
+            MeanSoilMoisture = SoilMoisture_mean_ts
+)
 
 # calculate SG building size
 buildingSize = BdSize(
@@ -317,7 +336,8 @@ buildingSize = BdSize(
 
 # reduction factor corresponding to size (area) of the SG building
 reduction_factor_BdSize = reduction_BdSize(
-            SG_BdSize = buildingSize
+            SG_BdSize = buildingSize,
+            VertLimit = VerticalExt_reduction
 )
 
 ## convert gravity response from next to building
@@ -325,7 +345,7 @@ gravity_response_below_building = convert_gravity_response(
             gravity_input = gravity_response_outside_building,
             factor_hydScen_SGloc = reduction_factor_hydSen_SGloc,
             factor_BdSize = reduction_factor_BdSize
-            )
+)
 
 message("done.")
 #########################################

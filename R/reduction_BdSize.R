@@ -4,6 +4,7 @@
 #'
 #' @param MeanSoilMoisture Data.frame, time series of the mean soil moisture content in the complete space outside of the observatory building.
 #' It needs 2 columns: one for time information (datetime) and one with the soil moisture data (value).
+#' @param VertLimit Numeric value of the vertical extent to be considered for the reduction. Values are in meters and have to be positive.
 #' 
 #' @return Returns a numerical values, which represents the correction factor based on the dimension of the SG building.
 #' This can later be used to adjust the modeled gravity response from outside of the building.
@@ -13,13 +14,19 @@
 #' @examples missing
 
 reduction_BdSize = function(
-            SG_BdSize
+            SG_BdSize,
+            VertLimit
 ){
     # load reduction parameters
-    load(file="reduction_parameters_BuildingSize.rData")
-    load(file="/home/mreich/Dokumente/written/ResearchRepos/UmbrellaEffect/data/reduction_parameters_BuildingSize.rData")
+    # old file: for complete 5 m vertical model extent
+    # load(file="reduction_parameters_BuildingSize.rData")
+    # new file: dynamic selection of vertical reduction depth possible
+    load(file="reduction_parameters_BuildingSize_limitedDepth.rData")
 
-    factor_num = reduction_parameters_building$Intercept + reduction_parameters_building$Slope * exp(1 / SG_BdSize)
+    Reg_params = reduction_parameters_building %>%
+        dplyr::filter(verticalLimit == VertLimit)
+    
+    factor_num = Reg_params$A + Reg_params$B * exp(1 / SG_BdSize)
 
     return(factor_num)
 }

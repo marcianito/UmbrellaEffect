@@ -4,7 +4,8 @@
 \alias{gravity_comp_grid}
 \title{Gravity component grid}
 \usage{
-gravity_comp_grid(surface, SG_coordinates, grid_discretization, grid_depth)
+gravity_comp_grid(surface, SG_coordinates, grid_discretization, grid_depth,
+  range_coords_x, range_coords_y)
 }
 \arguments{
 \item{surface}{this}
@@ -14,6 +15,8 @@ gravity_comp_grid(surface, SG_coordinates, grid_discretization, grid_depth)
 \item{grid_discretization}{this}
 
 \item{grid_depth}{this}
+
+\item{range_coords_x, y}{this}
 }
 \value{
 Returned is a data.frame with 4 columns.

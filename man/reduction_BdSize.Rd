@@ -4,9 +4,11 @@
 \alias{reduction_BdSize}
 \title{Receive reduction factor based on the dimension of the SG building}
 \usage{
-reduction_BdSize(SG_BdSize)
+reduction_BdSize(SG_BdSize, VertLimit)
 }
 \arguments{
+\item{VertLimit}{Numeric value of the vertical extent to be considered for the reduction. Values are in meters and have to be positive.}
+
 \item{MeanSoilMoisture}{Data.frame, time series of the mean soil moisture content in the complete space outside of the observatory building.
 It needs 2 columns: one for time information (datetime) and one with the soil moisture data (value).}
 }

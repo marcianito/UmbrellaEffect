@@ -4,8 +4,7 @@
 \alias{surface_to_grid3d}
 \title{Interpolate grid(df) to 3D grid}
 \usage{
-surface_to_grid3d(surface_grid, grid_discr, depth_split, Bd_x = Building_x,
-  Bd_y = Building_y)
+surface_to_grid3d(surface_grid, grid_discr, depth_split, Bd_x, Bd_y)
 }
 \arguments{
 \item{grid_discr}{vector of discretization of new grid in (x,y,z).}
