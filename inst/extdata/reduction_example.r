@@ -80,7 +80,7 @@ SG_SensorHeight = 1.5
 SG_x = 4564041.87 
 SG_y = 5445662.88 
 SG_Z = 606.471
-SG_SensorHeight = 1.5 
+SG_SensorHeight = 1.05 
 
 ## Model domain
 # in [m]

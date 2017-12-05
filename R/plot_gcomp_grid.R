@@ -23,10 +23,10 @@ plot_gcomp_grid = function(
     # grid_input = as.data.frame(gravity_component_grid3d)
     # yloc = round(SG_y, 1)
     # finding closest y-coordinate to supplied yloc
-    y_coords = unique(gravity_component_grid3d$y)
+    y_coords = unique(grid_input$y)
     yloc_plot = y_coords[which.min(abs(y_coords - yloc))]
     # set x and z-differences for plotting correct size of tiles
-    x_dif = unique(gravity_component_grid3d$x)[3] - unique(gravity_component_grid3d$x)[2]
+    x_dif = unique(grid_input$x)[3] - unique(grid_input$x)[2]
     # z_dif = unique(gravity_component_grid3d$z)[3] - unique(gravity_component_grid3d$z)[4]
     z_dif = grid_discretization$z
 
