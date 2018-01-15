@@ -15,6 +15,7 @@
 #' @details missing
 #' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
+#' @import gstat
 
 gravity_comp_grid = function(
             surface,
@@ -22,14 +23,20 @@ gravity_comp_grid = function(
             grid_discretization,
             grid_depth,
             range_coords_x,
-            range_coords_y
+            range_coords_y,
+            grid_edges = "both"
 ){
+    ### DEBUGING
     # surface = surface_grid
     # SG_coordinates = SGloc
     # grid_discretization = grid3d_discr
     # grid_depth = grid3d_depth
+    # range_coords_x = grid_x
+    # range_coords_y = grid_y
+    # grid_edges = "regular"
     # range_coords_x = sprinklingArea_x
     # range_coords_y = sprinklingArea_y
+    ###
 
     # generate 3d grid
     grid3d = surface_to_grid3d(
@@ -43,7 +50,8 @@ gravity_comp_grid = function(
     gcomp_grid = fill_gcompgrid(
             g_grid = grid3d,
             senloc = SG_coordinates,
-            g_discr = grid_discretization
+            g_discr = grid_discretization,
+            edge = grid_edges
     )
     # # take out column "layer", which was needed only for internal calculations
     # gcomp_grid = dplyr::select(gcomp_grid, -layer)
@@ -55,7 +63,7 @@ gravity_comp_grid = function(
     round_z = decimalplaces(grid_discretization$z)
     gcomp_grid$x = round(gcomp_grid$x, round_x)
     gcomp_grid$y = round(gcomp_grid$y, round_y)
-    gcomp_grid$z = round(gcomp_grid$z, round_z)
+    gcomp_grid$z = round(gcomp_grid$z, (round_z + 1))
     gcomp_grid$Depth = round(gcomp_grid$Depth, round_z)
 
     return(gcomp_grid)
@@ -73,42 +81,65 @@ gravity_comp_grid = function(
 #' @examples example MISSING
 #' @export
 
-fill_gcompgrid <- function(g_grid, senloc, g_discr){
-#constants
-gamma <- 6.673e-11 #m³/(kg*s²)
-rho <- 1000 #kg/m³
-#w <- 1e8 #gravity units µGal
-w <- 1e9 #gravity units nm/s²
-#radius criteria
-#r2exac=2^2 #bei 2.5 x 2.5 cellsizes ~=   50 m
-#r2macm=9^2 #bei 2.5 x 2.5 cellsizes ~= 1000 m
-r_inner = 50 #[m]
-r_outer = 1000 #[m]
-#prepare SG-data-file
-# gravity component is just a new column on g_grid
-# containing the g_comp, conditionally to some causes, calculated using one of the 3 methods
-# !! important
-# due to maintaining original grid, gravity component cells (volumini) of the first row (surface) and last row (lower boundary),
-# have to be adjusted to only HALF SIZE (value), due to cut off
-# advantage of this approach:
-# maintaining org. grid facilitates trasnformation of (hydrological) model output
-# because no grid_transformation is needed
-# if NOT, use layer "would be lost"
-# due to midpoint of g component cell (volumina)grid
-# here the calculations for each line (grid pointgrid)
-
-# set edge to upper AND lower model domain boundary
-# this is due to how to use hydrological model output
-edge = "both"
-
-layern_max = max(g_grid$layer)
-# rowwise
-g_grid = g_grid %>%
-	rowwise() %>%
-	mutate(gcomp = select_gMethod_Edges(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gamma,rho,w)) %>%
-	ungroup()
-
-return(g_grid)
+fill_gcompgrid <- function(
+       g_grid,
+       senloc,
+       g_discr,
+       edge = "both"
+){
+    ###
+    # DEBUGGING 
+    # g_grid = grid3d
+    # senloc = SG_coordinates
+    # g_discr = grid_discretization
+    # edge = grid_edges
+    ###
+    #constants
+    gamma <- 6.673e-11 #m³/(kg*s²)
+    rho <- 1000 #kg/m³
+    #w <- 1e8 #gravity units µGal
+    w <- 1e9 #gravity units nm/s²
+    #radius criteria
+    #r2exac=2^2 #bei 2.5 x 2.5 cellsizes ~=   50 m
+    #r2macm=9^2 #bei 2.5 x 2.5 cellsizes ~= 1000 m
+    r_inner = 50 #[m]
+    r_outer = 1000 #[m]
+    #prepare SG-data-file
+    # gravity component is just a new column on g_grid
+    # containing the g_comp, conditionally to some causes, calculated using one of the 3 methods
+    # !! important
+    # due to maintaining original grid, gravity component cells (volumini) of the first row (surface) and last row (lower boundary),
+    # have to be adjusted to only HALF SIZE (value), due to cut off
+    # advantage of this approach:
+    # maintaining org. grid facilitates trasnformation of (hydrological) model output
+    # because no grid_transformation is needed
+    # if NOT, use layer "would be lost"
+    # due to midpoint of g component cell (volumina)grid
+    # here the calculations for each line (grid pointgrid)
+    
+    # set edge to upper AND lower model domain boundary
+    # this is due to how to use hydrological model output
+    # -> now set as standard value directly in function definition (above)
+    # edge = "both"
+    
+    if(edge == "regular"){
+    layern_max = max(g_grid$layer)
+    # rowwise
+    g_grid = g_grid %>%
+        mutate(z = z - 0.5*g_discr$z) %>%
+    	rowwise() %>%
+    	mutate(gcomp = select_gMethod_regular(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gamma,rho,w)) %>%
+    	ungroup()
+    }else{
+    layern_max = max(g_grid$layer)
+    # rowwise
+    g_grid = g_grid %>%
+    	rowwise() %>%
+    	mutate(gcomp = select_gMethod_Edges(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gamma,rho,w)) %>%
+    	ungroup()
+    }
+    
+    return(g_grid)
 }
 
 #' @title Choose method for computing gravity component for a cell of a grid
@@ -207,6 +238,63 @@ select_gMethod_Edges = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, lay
 		 zloc_mid = zloc
 		 zdiscr = gdiscr$z
 		}
+           gcomp_cell=macmillan_raw(gamma,xloc,yloc,zloc_mid,gloc$x,gloc$y,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
+        }
+# output one value: gravity component for corresponding input cell
+return (gcomp_cell)
+}
+
+#' @title Choose method for computing gravity component for a cell of a grid
+#'
+#' @description With a regular grid approach (see "edges" method for edge-topic)
+#'
+#' @param xloc  t
+#' @param yloc  t
+#' @param zloc  t
+#' @param gloc  t
+#' @param gdiscr  t
+#' @param edge t
+#' @param layer  t
+#' @param layermax  t
+#' @param r_inner  t
+#' @param r_outer  t
+#' @param gamma t
+#' @param rho t
+#' @param w t
+#' ...
+#' @details test
+#' @references Marvin Reich (2018), mreich@@posteo.de
+#' @examples missing 
+#' @export
+#' 
+select_gMethod_regular = function(xloc, yloc, zloc, gloc, gdiscr, edge, layer, layermax, r_inner, r_outer, gamma, rho, w){
+        #distances
+        rad = sqrt((xloc-gloc$x)^2+(yloc-gloc$y)^2+(zloc-gloc$z)^2) #radial distance to SG
+        r2=rad^2
+        dr2=gdiscr$x^2+gdiscr$y^2+gdiscr$z^2 #radial "size" of DEM / coordinate-data system
+        f2=r2/dr2 #abstand zelle-SG / diagonale aktueller berechnungs-quader
+        # different methods after the distance from mass to SG
+        #if (f2<=r2exac){ #very close to SG
+        if (rad <= r_inner){ #very close to SG
+		  xl=xloc-(0.5*gdiscr$x);xr=xloc+(0.5*gdiscr$x)
+		  yl=yloc-(0.5*gdiscr$y);yr=yloc+(0.5*gdiscr$y)
+		  Zint = zloc+(0.5*gdiscr$z)
+		  Zend = zloc-(0.5*gdiscr$z)
+          # calculate gravity component
+          gcomp_cell=forsberg_raw(gamma,w,xl,xr,yl,yr,Zint,Zend,gloc$x,gloc$y,gloc$z,rho) #unit depends on w
+        }
+         #if(f2>r2macm){ #very far from SG
+         if(rad >= r_outer){ #very far from SG
+		  zloc_mid = zloc
+		  zdiscr = gdiscr$z
+          # calculate gravity component
+          gcomp_cell=pointmass(gamma,zloc_mid,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
+        }
+        #if(f2>r2exac & f2<r2macm){ #in the "middlle"
+        if(rad > r_inner & rad < r_outer){ #in the "middlle"
+		  zloc_mid = zloc
+		  zdiscr = gdiscr$z
+          # calculate gravity component
            gcomp_cell=macmillan_raw(gamma,xloc,yloc,zloc_mid,gloc$x,gloc$y,gloc$z,gdiscr$x,gdiscr$y,zdiscr,rad,w,rho) #unit depends on w
         }
 # output one value: gravity component for corresponding input cell
