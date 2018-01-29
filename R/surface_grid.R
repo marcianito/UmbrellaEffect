@@ -32,7 +32,18 @@ surface_grid = function(
     # DEM = DEM_input_file
     # grid_discretization = grid3d_discr
     # input_dir = dir_input
-
+    # DEM = DEM_input_file
+    # grid_domain_x = grid_x
+    # grid_domain_y = grid_y
+    # grid_discretization = grid3d_discr
+    # input_dir = dir_input_DEM
+    # output_dir = dir_input_DEM
+    # DEM = DEM_input_file
+    # grid_domain_x = grid_x
+    # grid_domain_y = grid_y
+    # grid_discretization = grid_discretization
+    # input_dir = dir_input_DEM
+    # output_dir = dir_input_DEM
     ## check if DEM is non-empty, if not return NULL
     if(DEM == ""){
         surface_grid = NULL
@@ -43,8 +54,21 @@ surface_grid = function(
         ## !
         
         # read DEM as raster
-        dem_raster = raster(paste0(input_dir,DEM))
-        
+        dem_raster = raster::raster(paste0(input_dir,DEM))
+        ## check visually
+        # read_dem(input_dir, DEM)
+        # plot_dem(dem, dem.info, data.frame(x=max(grid_domain_x),y=max(grid_domain_y),name="dummy"))
+        # crop raster
+        # if not done, getting a high discretization,
+        # from a big DEM would take forever!
+        # format: extent(row1, row2, col1, col2)
+        extent_around_coords = raster::extent(
+            min(grid_domain_x),
+            max(grid_domain_x),
+           min(grid_domain_y) ,
+           max(grid_domain_y))
+        dem_raster_cropped = raster::crop(dem_raster, extent_around_coords, snap = "out")
+
         # the older method was to crop the grid based on a new extent
         # this is now deprecated, due to problems with boundary coordinate extent and matching
         # new method: see below
@@ -72,8 +96,9 @@ surface_grid = function(
                                  # resolution = .5
                                  )
 
-        dem_grid_domain = resample(dem_raster, grid_domain_new)
-        writeRaster(dem_grid_domain, filename = paste0(output_dir, "dem_grid"), format="ascii", NAflag=-9999, overwrite=T)
+        dem_grid_domain = raster::resample(dem_raster_cropped, grid_domain_new)
+        # dem_grid_domain = raster::resample(dem_raster, grid_domain_new)
+        raster::writeRaster(dem_grid_domain, filename = paste0(output_dir, "dem_grid"), format="ascii", NAflag=-9999, overwrite=T)
 
         # reload grid for verification
         # in order to create the surface grid

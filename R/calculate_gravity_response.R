@@ -4,7 +4,7 @@
 #'
 #' @param gcomp_grid Data.frame, containing the gravity component grid (x,y,z, gcomp).
 #' @param mass_input Data.frame, containing columns structure $datetime, $value, $Depth.
-#' Important: soil moisture values have to be in %, not integer values. Otherwise the order of the resulting gravity response is by a factor 100.
+#' Important: soil moisture values have to be in \%, not integer values. Otherwise the order of the resulting gravity response is by a factor 100.
 #' 
 #' @details test
 #'

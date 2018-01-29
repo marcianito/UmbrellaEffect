@@ -10,7 +10,7 @@ calculate_gravity_response(gcomp_grid, mass_input)
 \item{gcomp_grid}{Data.frame, containing the gravity component grid (x,y,z, gcomp).}
 
 \item{mass_input}{Data.frame, containing columns structure $datetime, $value, $Depth.
-Important: soil moisture values have to be in %, not integer values. Otherwise the order of the resulting gravity response is by a factor 100.}
+Important: soil moisture values have to be in \%, not integer values. Otherwise the order of the resulting gravity response is by a factor 100.}
 }
 \value{
 Returns a data.frame containing columns of time information and the corresponding integrative gravity response.

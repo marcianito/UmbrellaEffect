@@ -5,7 +5,7 @@
 \title{Gravity component grid}
 \usage{
 gravity_comp_grid(surface, SG_coordinates, grid_discretization, grid_depth,
-  range_coords_x, range_coords_y)
+  range_coords_x, range_coords_y, grid_edges = "both")
 }
 \arguments{
 \item{surface}{this}

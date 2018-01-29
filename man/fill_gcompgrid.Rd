@@ -4,7 +4,7 @@
 \alias{fill_gcompgrid}
 \title{Calculate gravity component, WITHOUT umbrella effect}
 \usage{
-fill_gcompgrid(g_grid, senloc, g_discr)
+fill_gcompgrid(g_grid, senloc, g_discr, edge = "both")
 }
 \arguments{
 \item{g_grid}{grid for which to calculate gravity components. (generally derived from DEM of region in combination with hydrological modeling mesh/grid).}
