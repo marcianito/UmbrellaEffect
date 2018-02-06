@@ -67,6 +67,7 @@ surface_grid = function(
             max(grid_domain_x),
            min(grid_domain_y) ,
            max(grid_domain_y))
+        message("cropping DEM raster to smaller extent")
         dem_raster_cropped = raster::crop(dem_raster, extent_around_coords, snap = "out")
 
         # the older method was to crop the grid based on a new extent

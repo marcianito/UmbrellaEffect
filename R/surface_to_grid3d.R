@@ -18,8 +18,12 @@ surface_to_grid3d = function(
             Bd_x,
             Bd_y
 ){
-    # grid_discr = grid3d_discr
+    ## DEBUGGING
+    # surface_grid = grid_surface
+    # grid_discr = grid_discr
     # depth_split = grid3d_depth
+    # depth_split = grid_depth
+    ##
 
     # decide if a surface grid is supplied
     if(!is.null(surface_grid)){
