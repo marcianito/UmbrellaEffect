@@ -9,7 +9,6 @@ Depends: R (>= 3.2.1)
 Imports: dplyr,
          raster,
          zoo,
-         xts,
          reshape2,
          ggplot2,
          viridis,
