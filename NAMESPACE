@@ -2,3 +2,5 @@
 
 export(fill_gcompgrid)
 export(select_gMethod_Edges)
+export(select_gMethod_regular)
+import(gstat)
