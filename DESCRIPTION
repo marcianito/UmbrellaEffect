@@ -5,7 +5,7 @@ Authors@R: person("Marvin", "Reich", email = "mreich@posteo.de", role = c("aut",
 Description: Presents an easy way to reduce superconducting gravimeter measurements for the
              shielding influence of the instruments housing. 
              This procedure was published in the article: "ARTICLE".
-Depends: R (>= 3.3.1)
+Depends: R (>= 3.2.1)
 Imports: dplyr,
          raster,
          zoo,
