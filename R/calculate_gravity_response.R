@@ -27,6 +27,10 @@ calculate_gravity_response = function(
 		dplyr::mutate(gsignal = gcomp * value) %>%
 		dplyr::group_by(datetime) %>%
 		dplyr::summarize(value = sum(gsignal, na.rm=T))
-
+    # subtract first value
+    # this is done to have a correct reference of cumsum
+    # for comparison with other gravity (cumsum) time series
+    gsignals$value = gsignals$value - gsignals$value[1]
+    # return data
     return(gsignals)
 }

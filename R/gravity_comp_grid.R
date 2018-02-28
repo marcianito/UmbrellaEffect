@@ -130,6 +130,16 @@ fill_gcompgrid <- function(
     	rowwise() %>%
     	mutate(gcomp = select_gMethod_regular(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gamma,rho,w)) %>%
     	ungroup()
+    # # testing APPLY
+    # g_grid = g_grid %>%
+    #     mutate(z = z - 0.5*g_discr$z)
+    # g_grid$gcomp = apply(g_grid, 1,
+    #       select_gMethod_regular(x,y,z,senloc,g_discr, edge, layer, layern_max,r_inner,r_outer,gamma,rho,w)
+    #       )
+    # test = data.frame(x = 1,y = 10, z  = 100)
+    # test$c = paste(test$x, test$y, sep = "B")
+    # tsu = function(a,b){a+b}
+    # test$tt = apply(test[,1:2], 2, tsu)
     }else{
     layern_max = max(g_grid$layer)
     # rowwise
