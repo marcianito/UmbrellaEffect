@@ -32,8 +32,8 @@ For bug fixes, comments or further development please contact: mreich@posteo.de.
 
 ### Computationally
 * r-base version 3.3.1
-* gravity package (for standard routines): [HyGra](https://github.com/marcianito/HyGra)
-install via: `devtools::install_github("marcianito/UmbrellaEffect")`
+* gravity package [HyGra](https://github.com/marcianito/HyGra) (for standard routines): 
+`devtools::install_github("marcianito/HyGra")`
 * following R-packages: devtools, dplyr, ggplot2, gstat, ptinpoly, raster, reshape2, viridis, xts, zoo
 * system libraries for rgdal and devtools
 

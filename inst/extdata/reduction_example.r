@@ -23,13 +23,13 @@
 
 ## developing
 # library(HyGra)
-library(devtools)
-setwd("/home/mreich/Dokumente/written/ResearchRepos/")
-load_all("UmbrellaEffect")
+# library(devtools)
+# setwd("/home/mreich/Dokumente/written/ResearchRepos/")
+# load_all("/home/mreich/Dokumente/written/ResearchRepos/UmbrellaEffect")
 # create docu
 # library(roxygen2)
 # setwd("/home/mreich/Dokumente/written/ResearchRepos/UmbrellaEffect")
-# document()
+# devtools::document()
 # install package locally
 # not working !? -> use load_all() above
 # install()
@@ -41,7 +41,8 @@ library(zoo); Sys.setenv(TZ = "GMT")
 library(xts)
 library(dplyr)
 library(raster)
-# library(UmbrellaEffect)
+library(HyGra)
+library(UmbrellaEffect)
 library(reshape2)
 library(ggplot2)
 library(viridis)
@@ -75,7 +76,7 @@ plot_data = TRUE
 SG_x = 3
 SG_y = 3
 SG_Z = 0
-SG_SensorHeight = 1.5 
+SG_SensorHeight = 0
 # UTM coordinate system
 SG_x = 4564041.87 
 SG_y = 5445662.88 
@@ -96,7 +97,7 @@ Building_y = c(SG_y - 3, SG_y + 3) # min, max
 ## Model discretization
 # in [m]
 grid3d_discr = data.frame(x = .5, y = .5, z = .5)
-grid3d_depth = c(-3, 0) # min, max
+grid3d_depth = c(-5, 0) # min, max
 
 ## Parameters for foundation of building
 # these include baseplate, walls, SG pillar(s)
@@ -168,6 +169,20 @@ gravityObservations_input_file = "SG030_TS_1month.tsf"
 message("done.")
 ## end SETUP
 #########################################
+# ## test datasets
+# # soil moisture
+# load(paste0(dir_input, soilMoisture_input_file))
+# SoilMoisture_input
+# #gravity
+# Gravity_input = read_data(
+#                     data_in = gravityObservations_input_file,
+#                     data_dir = dir_input,
+#                     # spat_col = c(NA, NA, 2),
+#                     # dat_col = 3,
+#                     dat_tsf = data_tsf)
+# dev.new()
+# plot(Gravity_input)
+# ##
 
 #########################################
 ## CALCULATIONS
@@ -186,28 +201,14 @@ SG_z = SG_Z + SG_SensorHeight
 SGloc = data.frame(x=SG_x, y=SG_y, z=SG_z)
 
 #########################################
-## Generate cropped DEM and surface grid
-#########################################
-message("Generate cropped DEM and surface grid..")
-
-surface_grid = surface_grid(
-            DEM = DEM_input_file,
-            grid_domain_x = Building_x,
-            grid_domain_y = Building_y,
-            grid_discretization = grid3d_discr,
-            input_dir = dir_input,
-            output_dir = dir_output
-            # , sep = "a", etc.
-)
-
-message("done.")
-#########################################
 # Generate 3d gravity component grid 
 #########################################
 message("Generate 3d gravity component grid..")
-
-gravity_component_grid3d = gravity_comp_grid(
-            surface = surface_grid,
+## with NEW FUNCTION "create_gravityGrid()"
+load_all("/home/mreich/Dokumente/written/ResearchRepos/gravitySynth")
+gravity_component_grid3d = create_gravityGrid(
+            DEM_input_file = DEM_input_file,
+            dir_input_DEM = "",
             SG_coordinates = SGloc,
             grid_discretization = grid3d_discr,
             grid_depth = grid3d_depth,
@@ -235,40 +236,6 @@ gravity_component_grid3d = correct_SGbuilding_foundation(
             grid_discretization = grid3d_discr
 )
 
-# ## still to debug / solve
-# # rel.coord system: gcomp == 0 are 627, sum = 202.9727
-# # UTM.coord system: gcomp == 0 are 545, sum = 251.3699
-# gcomp_rel = gravity_component_grid3d
-# gcomp_utm = gravity_component_grid3d
-# gcomp_utm2 = gravity_component_grid3d
-# # plot in 3d slices
-# slice3D(x = gcomp_rel$x, y = gcomp_rel$y,z = gcomp_rel$z,colvar = as.array(dplyr::select(gcomp_rel, x,y,z)))
-# 
-# length(which(gravity_component_grid3d$gcomp == 0))
-# sum(gravity_component_grid3d$gcomp)
-# # lookt at upper boundary
-# gcomp_surface = dplyr::group_by(gravity_component_grid3d, Depth) %>%
-#     dplyr::summarize(nZeros = length(which(gcomp == 0)),
-#                      nTotal = length(gcomp))
-# gcomp_surface_UTM
-# 
-# gcomp_rel_mod = gcomp_rel
-# colnames(gcomp_rel_mod) = c("xrel","yrel","zrel","Depth_rel","layer_rel","gcomp_rel")
-# gcomps = cbind(gcomp_utm2, gcomp_rel_mod) %>%
-#     dplyr::filter(gcomp_rel == 0) %>%
-#     dplyr::filter(gcomp != 0)
-# 
-# # poblematic:
-# max(gravity_component_grid3d$z) - max(Building_baseplate_z)
-# min(gravity_component_grid3d$x) < min(Building_x)
-# min(gravity_component_grid3d$y) < min(Building_y)
-# # rounded: not solving problem
-# round(min(gravity_component_grid3d$x),1) - round(min(Building_x),1)
-# round(min(gravity_component_grid3d$y),1) - round(min(Building_y),1)
-# # not problematic:
-# max(gravity_component_grid3d$y) > max(Building_y)
-# max(gravity_component_grid3d$x) > max(Building_x)
-
 if(plot_data){
   message("Plotting transect of gravity component grid and saving plot to output directory..")
   plot_gcomp_grid(
@@ -293,6 +260,38 @@ SMgrid3d_outside = SoilMoisture_grid3d(
             input_dir = dir_input
             # , sep = "a", etc..
 )
+
+## TESTING WITH SOME
+# soil moisture and gravity data
+SMplot = dplyr::filter(SMgrid3d_outside, Depth == 0) %>%
+    dplyr::group_by(x,y) %>%
+    ggplot(aes(x = datetime, y = value, colour = paste0(x,"_",y))) + geom_line()
+
+unique(SMgrid3d_outside$Depth)
+SMplot = SMgrid3d_outside %>%
+    dplyr::group_by(datetime, Depth) %>%
+    dplyr::summarize(value = mean(value)) %>%
+    ggplot(aes(x = datetime, y = value, colour = Depth)) + geom_line() +
+    facet_grid(Depth ~ .)
+
+gcomps_depth = gravity_component_grid3d %>%
+    dplyr::group_by(Depth) %>%
+    dplyr::summarize(gcomp = sum(gcomp))
+
+gravity_per_depth = SMgrid3d_outside %>%
+    dplyr::group_by(datetime, Depth) %>%
+    dplyr::summarize(value = mean(value)) %>%
+    dplyr::inner_join(gcomps_depth) %>%
+    dplyr::mutate(gravity = gcomp * value)
+
+ggplot(gravity_per_depth, aes(x = datetime, y = gravity, colour = Depth)) + geom_line() +
+    facet_grid(Depth ~ .)
+    
+gravity_over_time = gravity_per_depth %>%
+  dplyr::group_by(datetime) %>%
+  dplyr::summarize(value = sum(gravity))
+dev.new()
+## end TESTING WITH SOME
 
 message("done.")
 #########################################
@@ -322,9 +321,9 @@ message("Convert gravity response (outside) to gravity response below SG buildin
 
 # reduction factor corresponding to chosen dominant hydrological scenario and SG position
 reduction_factor_hydSen_SGloc = reduction_hydScen_SGloc(
-            Scenario == Hydro_condition,
-            SGlocation == SG_position,
-            VertLimit = VerticalExt_reduction,
+            setScenario = Hydro_condition,
+            setSGlocation = SG_position,
+            setVertLimit = VerticalExt_reduction,
             MeanSoilMoisture = SoilMoisture_mean_ts
 )
 
@@ -346,6 +345,10 @@ gravity_response_below_building = convert_gravity_response(
             factor_hydScen_SGloc = reduction_factor_hydSen_SGloc,
             factor_BdSize = reduction_factor_BdSize
 )
+
+g_resp_below_ma = rollapply(gravity_response_below_building$value, 24*7, mean)
+dev.new()
+plot(g_resp_below_ma)
 
 message("done.")
 #########################################
@@ -427,29 +430,3 @@ message(dir_output)
 message("If gravity observation data was supplied, the data has been recuded automatically by the UmbrellaEffect results,
 and stored as well in the output directory.")
 
-
-##########
-### prepare input TS data
-
-# sm = read_data(soilMoisture_input_file, dir_input)
-# sm_ts = unique(sm$datetime)
-# gg = read_data(gravityObservations_input_file, dir_input)
-# gg_ts = unique(gg$datatime)
-# sm = sm %>% dplyr::filter(datetime != 0)
-# change_dates = data.frame(
-#                           datetime = sm_ts[2:745],
-#                           datatime = gg_ts)
-# sm_mod = left_join(change_dates, sm)
-## !! check if z has NEGATIVE COORDINATES DOWNWARDS !!
-# SoilMoisture_input_1d = data.frame(
-#                                    datetime = sm_mod$datatime,
-#                                    z = sm_mod$z,
-#                                    data = sm_mod$value)
-# write.table(SoilMoisture_input_1d, file="SMdata_TS_1d.csv", row.names=F)
-# save(SoilMoisture_input_1d, file="SMdata_TS_1d.rdata")
-# getwd()
-
-# tt = read_data(data_in = gravityObservations_input_file,
-#                data_dir = dir_input,
-#                dat_tsf = data_tsf
-# )
