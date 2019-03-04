@@ -15,7 +15,6 @@
 #' @details missing
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples outside.cor = ccf.zoo(besidesBuilding$mux43_04,besidesBuilding$mux43_08,5,T,T,T,24,17521)
-#' @export
 #' 
 
 timeshift = function(data1,data2,nmax,norm=T,stl=F,plotting=T,swin,twin,sensor1="data1", sensor2="data2",...){
@@ -201,7 +200,6 @@ timeshift = function(data1,data2,nmax,norm=T,stl=F,plotting=T,swin,twin,sensor1=
 
 #' @title Event-based calulation of correlation coefficients, lagtimes and signal to noise ratios
 #'
-#' @description 
 #' @description So far hard-coded for SM data of wettzell SGnew TS
 #'
 #' @param event vector of start and end date of event.
@@ -213,7 +211,6 @@ timeshift = function(data1,data2,nmax,norm=T,stl=F,plotting=T,swin,twin,sensor1=
 #' @details Output is a data.frame with correlation coeficients, lagtime and signal to soise ratios for each sensor.
 #' @references Marvin Reich (2015), mreich@@gfz-potsdam.de
 #' @examples
-#' @export
 #' 
 
 ccf_events = function(event, event_name, mv_win, nmax, stl_flag=F,plots=T,...){
@@ -338,7 +335,6 @@ return(results_event)
 #' @details Output is a data.frame with mean values for correlation coeficients, lagtime and quality of signal to soise ratio.
 #' @references Marvin Reich (2015), mreich@@gfz-potsdam.de
 #' @examples
-#' @export
 #' 
 
 ccf_multievent = function(events, mv_win, nmax, limit_cor, correct_cor=T, limit_lag, correct_lag=T, plotting=T){
@@ -493,7 +489,6 @@ ccf_multievent = function(events, mv_win, nmax, limit_cor, correct_cor=T, limit_
 #' @details missing
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples outside.cor = ccf.zoo(besidesBuilding$mux43_04,besidesBuilding$mux43_08,5,T,T,T,24,17521)
-#' @export
 #' 
 
 cclag = function(data1,data2,nmax,normdata=T,mv_win=96,ccfplot=F,resplot=F,sensor1="data1", sensor2="data2",...){
@@ -635,7 +630,6 @@ cclag = function(data1,data2,nmax,normdata=T,mv_win=96,ccfplot=F,resplot=F,senso
 #' @details missing
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples outside.cor = ccf.zoo(besidesBuilding$mux43_04,besidesBuilding$mux43_08,5,T,T,T,24,17521)
-#' @export
 #' 
 
 cclag_nosnr = function(data1,data2,data1.raw,data2.raw,nmax,normdata=T,mv_win=96,ccfplot=F,resplot=F,sensor1="data1", sensor2="data2",...){
@@ -792,7 +786,6 @@ cclag_nosnr = function(data1,data2,data1.raw,data2.raw,nmax,normdata=T,mv_win=96
 #' @details Output is a data.frame with correlation coeficients, lagtime and signal to soise ratios for each sensor.
 #' @references Marvin Reich (2015), mreich@@gfz-potsdam.de
 #' @examples
-#' @export
 #' 
 
 cclag_events = function(event, event_name, mv_win, nmax,plots=T,...){

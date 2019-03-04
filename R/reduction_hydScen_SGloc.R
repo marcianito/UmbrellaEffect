@@ -18,6 +18,7 @@
 #' @details missing
 #' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
+#' @export
 
 reduction_hydScen_SGloc = function(
             setScenario,

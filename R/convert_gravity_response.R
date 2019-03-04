@@ -16,6 +16,7 @@
 #' @details missing
 #' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
+#' @export
 
 convert_gravity_response = function(
             gravity_input,

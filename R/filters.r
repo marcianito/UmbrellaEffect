@@ -15,7 +15,6 @@
 #' @details Possible values for lag.mean are "hours", "days", "weeks", "months", "quarters" or "years".
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples example MISSING
-#' @export
  
 filter_soildata <- function(file.input,val.max=1,val.min=0,val.incr,val.decr,lag.max, per.max, per.min, lag.mean,k){
 # source("/home/mreich/R-gravity-package/package09/hygra_test/R/convertzootodataframe.r")
@@ -72,7 +71,6 @@ return(file.out)
 #' @details The output is a numeric number, representative for the complete input time period.
 #' @references Marvin Reich (2015), mreich@@gfz-potsdam.de
 #' @examples example MISSING
-#' @export
 #' 
 
 snr_ratio = function(data.in, mv_win, rmNA = T, plotting=F){
@@ -102,7 +100,6 @@ snr_ratio = function(data.in, mv_win, rmNA = T, plotting=F){
 #' @details The output is a numeric number, representative for the complete input time period.
 #' @references Marvin Reich (2015), mreich@@gfz-potsdam.de
 #' @examples example MISSING
-#' @export
 #' 
 
 snr_ratio_2TS = function(data.in.raw, data.in.signal, rmNA = T, plotting=F){
@@ -134,7 +131,6 @@ snr_ratio_2TS = function(data.in.raw, data.in.signal, rmNA = T, plotting=F){
 #' @details The output is a time series: signal =  the input time series (raw data) - noise.
 #' @references Marvin Reich (2015), mreich@@gfz-potsdam.de
 #' @examples example MISSING
-#' @export
 #' 
 
 snr_filter = function(data.in, mv_win, rmNA = T, plotting=F){

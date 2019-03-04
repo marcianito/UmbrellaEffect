@@ -14,7 +14,6 @@
 #' @details Both DEM-data and its information file can be created using readDEM(). 
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples missing 
-#' @export
 
 hydrus_dem <- function(inputpath,inputfile,dz,limit.area){
   ##loading until package status..
@@ -275,7 +274,6 @@ hydrus_sm <- function(date.in, date.out, name, datacol, freq="hour",aszoo=F){
 #' @param timestamps vector of timestamps of the modeled timeseries. if not provided output time will be in counts of timesteps
 #' 
 #' @details missing
-#' @import dplyr, ggplot2, reshape2, grid, gridExtra, scales
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples missing
 
@@ -1093,7 +1091,6 @@ read_obsNode3d <- function(folder,realTime=T,startdate,plotting=F){
 #' @param startdate starting date for output in UTC. Format is POSIXct.
 #' @param plotting do you want node time series plotted (default is FALSE).
 #' @details missing
-#' @import stringr
 #' @references Marvin Reich (2014), mreich@@gfz-potsdam.de
 #' @examples missing
 

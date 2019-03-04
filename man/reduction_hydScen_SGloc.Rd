@@ -4,16 +4,17 @@
 \alias{reduction_hydScen_SGloc}
 \title{Receive reduction factor based on hydrological conditon and position of SG}
 \usage{
-reduction_hydScen_SGloc(Scenario, SGlocation, VertLimit, MeanSoilMoisture)
+reduction_hydScen_SGloc(setScenario, setSGlocation, setVertLimit,
+  MeanSoilMoisture, dir_reductionRatios)
 }
 \arguments{
-\item{Scenario}{Character vector, defining the dominant hydrological condition found at or around the observatory building.
+\item{setScenario}{Character vector, defining the dominant hydrological condition found at or around the observatory building.
 For possible options please read the instructions.}
 
-\item{SGlocation}{Character string, describing the position of the SG within its building.
+\item{setSGlocation}{Character string, describing the position of the SG within its building.
 For possible options please read the instructions.}
 
-\item{VertLimit}{Numeric value of the vertical extent to be considered for the reduction. Values are in meters and have to be positive.}
+\item{setVertLimit}{Numeric value of the vertical extent to be considered for the reduction. Values are in meters and have to be positive.}
 
 \item{MeanSoilMoisture}{Data.frame, time series of the mean soil moisture content in the complete space outside of the observatory building.
 It needs 2 columns: one for time information (datetime) and one with the soil moisture data (value).}

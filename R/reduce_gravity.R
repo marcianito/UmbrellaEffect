@@ -14,6 +14,7 @@
 #' @details missing
 #' @references Marvin Reich (2017), mreich@@posteo.de
 #' @examples missing
+#' @export
 
 reduce_gravity = function(
             gravity_obs,
