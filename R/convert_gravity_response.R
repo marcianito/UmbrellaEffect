@@ -23,7 +23,12 @@ convert_gravity_response = function(
             factor_BdSize
 ){
     gravity_converted = gravity_input %>%
-        dplyr::left_join(factor_hydScen_SGloc) %>%
+        # dplyr::left_join(factor_hydScen_SGloc) %>%
+        dplyr::inner_join(factor_hydScen_SGloc) %>%
+        # new
+        dplyr::filter(is.na(value) == F) %>%
+        dplyr::filter(is.na(fac1) == F) %>%
+        #
         dplyr::mutate(fac2 = factor_BdSize) %>%
         dplyr::mutate(value = value * fac1 * fac2) %>%
         dplyr::select(-fac1, -fac2)

@@ -23,7 +23,8 @@ reduction_hydScen_SGloc = function(
             setScenario,
             setSGlocation,
             setVertLimit,
-            MeanSoilMoisture
+            MeanSoilMoisture,
+            dir_reductionRatios
 ){
     ## DEBUGGING
             # setScenario = Hydro_condition
@@ -35,7 +36,7 @@ reduction_hydScen_SGloc = function(
     # old file: for complete 5 m vertical model extent
     # load(file="reduction_parameters_HydScen_SGloc.rData")
     # new file: dynamic selection of vertical reduction depth possible
-    load(file="reduction_parameters_HydScen_SGloc_limitedDepth.rData")
+    load(file=paste0(dir_reductionRatios, "reduction_parameters_HydScen_SGloc_limitedDepth.rData"))
     # filter parameterset for chosen settings
     redParam_hydScen_SGloc = dplyr::filter(reduction_parameters,
                                                   Scenario == setScenario,
