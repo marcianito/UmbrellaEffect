@@ -1,7 +1,7 @@
-Repository containing scripts related to _Reich et al., (2017, ???)_ publication
+Repository containing scripts related to _Reich et al. (2019)_ publication
 ======================================================================
 **Article:**  
-Marvin Reich<sup>1</sup>, Michal Mikolaj<sup>1</sup>, Theresa Blume<sup>1</sup>, Andreas Güntner<sup>1,4</sup>: **_TITLE_**, published in: [???](http://link.com), **2017**
+Marvin Reich<sup>1</sup>, Michal Mikolaj<sup>1</sup>, Theresa Blume<sup>1</sup>, Andreas Güntner<sup>1,4</sup>: **2019**,  **_Reducing gravity data for the influence of water storage variations beneath observatory buildings_**, published in Geophysics. View [Article](https://doi.org/10.1190/geo2018-0301.1)
 
 **Affiliation**  
 <sup>1</sup>Helmholtz Centre Potsdam GFZ German Research Centre for Geosciences, Section 5.4 Hydrology, 14473 Potsdam, Germany  
